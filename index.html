@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Class Observation Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #4CC9FE; --green: #6BCB77; --orange: #FF9F43; --purple: #A29BFE;
+            --gloss: rgba(255, 255, 255, 0.3);
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Fredoka', sans-serif; overflow: hidden; background-color: #000; }
+        
+        #hub-container {
+            position: relative; width: 100vw; height: 100vh;
+            background: url('master_home_page.png') no-repeat center center;
+            background-size: cover;
+        }
+
+        #activity-zone {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; background: white; z-index: 10;
+        }
+
+        iframe { width: 100%; height: 100%; border: none; display: block; }
+
+        .nav-menu {
+            position: absolute; right: 4%; top: 45%; bottom: 5%; width: 40%;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; z-index: 5;
+        }
+
+        .btn-3d {
+            border: none; border-radius: 20px; color: white; font-family: 'Fredoka', sans-serif;
+            font-weight: 600; font-size: 1.3rem; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; text-align: center;
+            padding: 15px; position: relative; transition: all 0.1s;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-blue { background: var(--blue); box-shadow: 0 8px 0 #2a9ccb, 0 12px 15px rgba(0,0,0,0.3); }
+        .btn-green { background: var(--green); box-shadow: 0 8px 0 #4a9e55, 0 12px 15px rgba(0,0,0,0.3); }
+        .btn-orange { background: var(--orange); box-shadow: 0 8px 0 #cc7f35, 0 12px 15px rgba(0,0,0,0.3); }
+        .btn-purple { background: var(--purple); box-shadow: 0 8px 0 #7b75cb, 0 12px 15px rgba(0,0,0,0.3); }
+
+        .btn-3d::after {
+            content: ''; position: absolute; top: 4px; left: 8px; right: 8px; height: 35%;
+            background: var(--gloss); border-radius: 15px 15px 4px 4px;
+        }
+
+        .btn-3d:active { transform: translateY(6px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        .span-2 { grid-column: span 2; }
+
+        .control-bar { position: absolute; top: 20px; left: 20px; display: flex; gap: 15px; z-index: 100; }
+        .circle-btn {
+            width: 65px; height: 65px; background: white; border: 4px solid var(--blue);
+            border-radius: 50%; cursor: pointer; font-size: 1.8rem;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #home-btn { display: none; border-color: var(--orange); }
+    </style>
+</head>
+<body>
+
+    <div id="hub-container">
+        <div class="control-bar">
+            <button class="circle-btn" onclick="toggleFS()">⛶</button>
+            <button class="circle-btn" id="home-btn" onclick="backToHub()">🏠</button>
+        </div>
+
+        <div class="nav-menu" id="nav-grid">
+            <button class="btn-3d btn-blue" onclick="openGame('doctor_on_call/PickAPill.html')">Pick A Pill</button>
+            <button class="btn-3d btn-green" onclick="openGame('canva')">What's Wrong with Tim?</button>
+            <button class="btn-3d btn-orange" onclick="openGame('figure_it_out/FigureItOut.html')">Figure It Out!</button>
+            <button class="btn-3d btn-purple" onclick="openGame('doctor_on_call/DoctorOnCall.html')">Doctor on Call!</button>
+            <button class="btn-3d btn-blue span-2" onclick="openGame('quick_check/QuickCheck.html')">Quick Check</button>
+        </div>
+
+        <div id="activity-zone">
+            <iframe id="app-frame" name="app-frame" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script>
+        const navGrid = document.getElementById('nav-grid');
+        const activityZone = document.getElementById('activity-zone');
+        const frame = document.getElementById('app-frame');
+        const homeBtn = document.getElementById('home-btn');
+
+        function openGame(url) {
+            if (url === 'canva') {
+                frame.src = "https://www.canva.com/design/DAHGbjNDFRw/16X8HHTZhbsaW1s5Q65vgw/view?embed";
+            } else {
+                frame.src = url;
+            }
+            navGrid.style.display = 'none';
+            activityZone.style.display = 'block';
+            homeBtn.style.display = 'flex';
+        }
+
+        function backToHub() {
+            frame.src = "about:blank";
+            navGrid.style.display = 'grid';
+            activityZone.style.display = 'none';
+            homeBtn.style.display = 'none';
+        }
+
+        function toggleFS() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {});
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Final safety: Stop the hub from reacting to any "submit" events from the iframe
+        window.addEventListener('submit', function(e) {
+            e.preventDefault();
+        }, true);
+    </script>
+</body>
+</html>

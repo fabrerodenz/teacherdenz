@@ -10,42 +10,22 @@
             --primary: #FF5722;
             --secondary: #4CAF50;
             --accent: #2196F3;
-            --yellow: #FFC107;
-            --purple: #9C27B0;
             --white: #FFFFFF;
-            --shadow: 0 8px 0 rgba(0,0,0,0.2);
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            font-family: 'Fredoka', sans-serif;
-            overflow: hidden;
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            font-family: 'Fredoka', sans-serif; overflow: hidden;
             background-color: #f0f0f0;
         }
 
         .page {
-            display: none;
-            width: 100vw;
-            height: 100vh;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: absolute;
-            top: 0;
-            left: 0;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s ease;
+            display: none; width: 100vw; height: 100vh;
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            position: absolute; top: 0; left: 0;
+            flex-direction: column; align-items: center; justify-content: center;
         }
 
         .active { display: flex; animation: pop 0.3s ease; }
@@ -55,139 +35,75 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
+        /* Backgrounds */
         #home-page { background-image: url('home_page.png'); }
         #game-page { background-image: url('game_page.png'); }
         #question-page { background-image: url('question_page.png'); }
         #answer-page { background-image: url('answer_page.png'); }
         #result-page { background-image: url('final_result.png'); }
 
+        /* Buttons */
         .btn {
-            padding: 20px 40px;
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: white;
-            background: var(--primary);
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 10px 0 #d84315;
-            cursor: pointer;
-            margin: 10px;
-            transition: transform 0.1s;
-            text-align: center;
+            padding: 20px 40px; font-size: 2.2rem; font-weight: 600;
+            color: white; background: var(--primary); border: none;
+            border-radius: 20px; box-shadow: 0 10px 0 #d84315;
+            cursor: pointer; margin: 10px; transition: transform 0.1s;
         }
-
-        .btn:active {
-            transform: translateY(6px);
-            box-shadow: 0 4px 0 #d84315;
-        }
-
+        .btn:active { transform: translateY(6px); box-shadow: 0 4px 0 #d84315; }
         .btn-green { background: var(--secondary); box-shadow: 0 10px 0 #2e7d32; }
         .btn-green:active { box-shadow: 0 4px 0 #2e7d32; }
-        
         .btn-blue { background: var(--accent); box-shadow: 0 10px 0 #1565c0; }
         .btn-blue:active { box-shadow: 0 4px 0 #1565c0; }
 
-        .bottom-nav {
-            position: absolute;
-            bottom: 30px; /* Moved slightly downward */
-            display: flex;
-            gap: 20px;
-        }
-
+        /* Alignment Tweaks */
+        .bottom-nav { position: absolute; bottom: 25px; display: flex; gap: 20px; }
+        
         .scoreboard-container {
-            position: absolute;
-            top: 8%; /* Moved slightly downward from 5% */
-            display: flex;
-            gap: 40px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px 40px;
-            border-radius: 30px;
-            border: 6px solid var(--accent);
-            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+            position: absolute; top: 12%; /* Moved downward */
+            display: flex; gap: 40px; background: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px; border-radius: 30px; border: 6px solid var(--accent);
         }
 
-        .score-box { text-align: center; }
-        .score-name { font-size: 1.5rem; color: #333; margin-bottom: 5px; }
+        .score-box { text-align: center; min-width: 150px; }
         .score-num { font-size: 4rem; font-weight: bold; color: var(--primary); }
-        .score-controls button {
-            background: #eee; border: none; font-size: 2rem; 
-            padding: 5px 15px; border-radius: 10px; cursor: pointer;
-        }
 
-        .number-container {
-            display: flex;
-            gap: 25px;
-            margin-top: 100px;
-        }
-
+        .number-container { display: flex; gap: 20px; margin-top: 80px; }
         .num-box {
-            width: 150px;
-            height: 150px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 25px;
-            font-size: 4rem;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 12px 0 rgba(0,0,0,0.2);
-            transition: transform 0.2s;
+            width: 140px; height: 140px; border-radius: 25px;
+            font-size: 4rem; font-weight: bold; color: white;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.2); cursor: pointer;
+        }
+        .num-box.used { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
+
+        .content-box {
+            background: white; padding: 40px; border-radius: 30px;
+            text-align: center; font-size: 2rem; line-height: 1.6;
+            box-shadow: 0 15px 0 rgba(0,0,0,0.1); max-width: 85%;
         }
 
-        .num-box span { font-size: 1rem; margin-top: 5px; }
-        .num-box.used { opacity: 0.4; filter: grayscale(1); pointer-events: none; }
-
-        .instruction-content {
-            background: white;
-            padding: 50px;
-            border-radius: 40px;
-            text-align: center;
-            font-size: 2.2rem;
-            line-height: 1.8;
-            box-shadow: 0 20px 0 rgba(0,0,0,0.1);
+        .edit-input {
+            width: 100%; font-family: 'Fredoka'; font-size: 1.2rem;
+            padding: 10px; margin: 10px 0; border: 2px solid #ccc; border-radius: 10px;
         }
-
-        .question-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 80%;
-        }
-
-        .display-img {
-            max-height: 45vh;
-            border-radius: 20px;
-            border: 10px solid white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
-        }
-
-        .q-text { font-size: 3.5rem; color: #333; background: white; padding: 10px 30px; border-radius: 20px; margin-bottom: 20px; text-align: center; }
 
         #music-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            border: 4px solid var(--accent);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 1000;
+            position: fixed; top: 20px; right: 20px; background: white;
+            border: 4px solid var(--accent); border-radius: 50%;
+            width: 60px; height: 60px; font-size: 1.5rem; cursor: pointer; z-index: 1000;
         }
+
+        .display-img { max-height: 45vh; border: 10px solid white; border-radius: 20px; }
+        .q-text { font-size: 3rem; background: white; padding: 15px 30px; border-radius: 20px; margin-bottom: 20px; }
     </style>
 </head>
-<body onload="initAudio()">
+<body onclick="autoStartAudio()">
 
-    <audio id="bgMusic" loop>
+    <audio id="bgMusic" loop preload="auto">
         <source src="game_bg.mp3" type="audio/mpeg">
     </audio>
 
-    <button id="music-btn" onclick="toggleMusic()">🎵</button>
+    <button id="music-btn" onclick="toggleMusic(event)">🎵</button>
 
     <div id="home-page" class="page active">
         <div class="bottom-nav">
@@ -198,193 +114,197 @@
     </div>
 
     <div id="how-to-page" class="page" style="background-color: #FFEB3B;">
-        <div class="instruction-content">
+        <div class="content-box">
             <b>Go to the front.</b> <span style="color:var(--primary)">👉 到前面</span><br>
             <b>Look at the picture.</b> <span style="color:var(--primary)">👉 看圖片</span><br>
             <b>Write your answer on your whiteboard.</b> <span style="color:var(--primary)">👉 在白板上寫下答案</span><br>
             <b>Press the buzzer when you finish writing.</b> <span style="color:var(--primary)">👉 寫完後按按鈕</span><br>
             <b>Read the sentence with your group.</b> <span style="color:var(--primary)">👉 和小組一起唸句子</span>
         </div>
-        <button class="btn" style="margin-top: 40px;" onclick="showPage('home-page')">BACK</button>
+        <button class="btn" style="margin-top: 30px;" onclick="showPage('home-page')">BACK</button>
     </div>
 
     <div id="groups-page" class="page" style="background-color: #E1F5FE;">
-        <div style="display: flex; gap: 40px;">
-            <div class="instruction-content">
-                <h2 style="color:var(--accent); margin:0">GROUP A</h2>
-                <hr>
-                Charlie, Randy, Jadon,<br>Irene, Jason
+        <div style="display: flex; gap: 30px;">
+            <div class="content-box">
+                <h2 id="disp-nameA" style="color:var(--accent); margin:0">GROUP A</h2>
+                <hr><div id="disp-membersA">Charlie, Randy, Jadon, Irene, Jason</div>
             </div>
-            <div class="instruction-content">
-                <h2 style="color:var(--primary); margin:0">GROUP B</h2>
-                <hr>
-                Sophia, Henry, Athena,<br>James, Linda
+            <div class="content-box">
+                <h2 id="disp-nameB" style="color:var(--primary); margin:0">GROUP B</h2>
+                <hr><div id="disp-membersB">Sophia, Henry, Athena, James, Linda</div>
             </div>
         </div>
-        <button class="btn" style="margin-top: 40px;" onclick="showPage('home-page')">BACK</button>
+        <div class="bottom-nav">
+            <button class="btn" onclick="showPage('home-page')">BACK</button>
+            <button class="btn btn-green" onclick="showPage('edit-groups-page')">Edit Groups</button>
+        </div>
+    </div>
+
+    <div id="edit-groups-page" class="page">
+        <div class="content-box" style="width: 500px;">
+            <h2>Edit Group Details</h2>
+            <input id="edit-nameA" class="edit-input" placeholder="Group A Name">
+            <textarea id="edit-membersA" class="edit-input" rows="2"></textarea>
+            <input id="edit-nameB" class="edit-input" placeholder="Group B Name">
+            <textarea id="edit-membersB" class="edit-input" rows="2"></textarea>
+            <button class="btn btn-green" onclick="saveGroups()">SAVE</button>
+        </div>
     </div>
 
     <div id="game-page" class="page">
         <div class="scoreboard-container">
             <div class="score-box">
-                <div class="score-name">Group A</div>
+                <div class="gn-A">Group A</div>
                 <div id="scoreA" class="score-num">0</div>
-                <div class="score-controls">
-                    <button onclick="updateManualScore('A', 1)">➕</button>
-                    <button onclick="updateManualScore('A', -1)">➖</button>
-                </div>
+                <button onclick="changeScore('A', 1)">➕</button><button onclick="changeScore('A', -1)">➖</button>
             </div>
-            <div style="width: 2px; background: #ccc;"></div>
             <div class="score-box">
-                <div class="score-name">Group B</div>
+                <div class="gn-B">Group B</div>
                 <div id="scoreB" class="score-num">0</div>
-                <div class="score-controls">
-                    <button onclick="updateManualScore('B', 1)">➕</button>
-                    <button onclick="updateManualScore('B', -1)">➖</button>
-                </div>
+                <button onclick="changeScore('B', 1)">➕</button><button onclick="changeScore('B', -1)">➖</button>
             </div>
         </div>
-
         <div class="number-container">
-            <div class="num-box" id="box1" style="background: #f44336;" onclick="goToQuestion(0)">1<span>Q1</span></div>
-            <div class="num-box" id="box2" style="background: #2196F3;" onclick="goToQuestion(1)">2<span>Q2</span></div>
-            <div class="num-box" id="box3" style="background: #4CAF50;" onclick="goToQuestion(2)">3<span>Q3</span></div>
-            <div class="num-box" id="box4" style="background: #FF9800;" onclick="goToQuestion(3)">4<span>Q4</span></div>
-            <div class="num-box" id="box5" style="background: #9C27B0;" onclick="goToQuestion(4)">5<span>Q5</span></div>
+            <div class="num-box" id="box1" style="background:#f44336" onclick="startQ(0)">1</div>
+            <div class="num-box" id="box2" style="background:#2196F3" onclick="startQ(1)">2</div>
+            <div class="num-box" id="box3" style="background:#4CAF50" onclick="startQ(2)">3</div>
+            <div class="num-box" id="box4" style="background:#FF9800" onclick="startQ(3)">4</div>
+            <div class="num-box" id="box5" style="background:#9C27B0" onclick="startQ(4)">5</div>
         </div>
-
         <div class="bottom-nav">
             <button class="btn" onclick="showPage('home-page')">BACK TO HOME</button>
-            <button class="btn btn-green" onclick="finishGame()">FINAL RESULT</button>
+            <button class="btn btn-green" onclick="showResults()">FINAL RESULT</button>
         </div>
     </div>
 
     <div id="question-page" class="page">
-        <div class="question-content">
-            <div id="q-prompt" class="q-text"></div>
-            <img id="q-img" src="" class="display-img">
-            <button class="btn btn-green" onclick="showAnswer()">SHOW THE ANSWER</button>
-        </div>
+        <div id="q-prompt" class="q-text"></div>
+        <img id="q-img" src="" class="display-img">
+        <button class="btn btn-green" onclick="showAns()">SHOW THE ANSWER</button>
     </div>
 
     <div id="answer-page" class="page">
-        <div class="question-content">
-            <img id="a-img" src="" class="display-img">
-            <div id="a-text" class="q-text" style="color: var(--secondary); font-weight: bold;"></div>
-            <p style="font-size: 1.5rem; margin: 0;">Who got it?</p>
-            <div style="display:flex; gap:20px;">
-                <button class="btn btn-blue" onclick="awardPoints('A')">Group A</button>
-                <button class="btn btn-blue" onclick="awardPoints('B')">Group B</button>
-            </div>
+        <img id="a-img" src="" class="display-img">
+        <div id="a-text" class="q-text" style="color:var(--secondary); font-weight:bold;"></div>
+        <div style="display:flex; gap:20px;">
+            <button class="btn btn-blue awardA" onclick="award('A')">Group A</button>
+            <button class="btn btn-blue awardB" onclick="award('B')">Group B</button>
         </div>
     </div>
 
     <div id="result-page" class="page">
-        <div class="instruction-content" style="padding: 80px;">
-            <h1 style="font-size: 5rem; margin-top: 0;">GAME OVER!</h1>
-            <div style="display: flex; gap: 100px; justify-content: center;">
-                <div>
-                    <h3>GROUP A</h3>
-                    <div id="finalA" style="font-size: 6rem; color: var(--accent);">0</div>
-                </div>
-                <div>
-                    <h3>GROUP B</h3>
-                    <div id="finalB" style="font-size: 6rem; color: var(--primary);">0</div>
-                </div>
+        <div class="content-box">
+            <h1>FINAL SCORE</h1>
+            <div style="display:flex; gap:50px;">
+                <div><h2 class="gn-A">Group A</h2><div id="finA" style="font-size:4rem">0</div></div>
+                <div><h2 class="gn-B">Group B</h2><div id="finB" style="font-size:4rem">0</div></div>
             </div>
         </div>
-        <button class="btn" style="margin-top: 40px;" onclick="location.reload()">PLAY AGAIN</button>
+        <button class="btn" onclick="location.reload()">RESTART</button>
     </div>
 
     <script>
-        // UPDATED QUESTIONS AND ANSWERS
-        const gameData = [
-            { id: 1, q: "Do you have a sore throat?", a: "No, I don’t. I have a runny nose.", img: "Q1.png" },
-            { id: 2, q: "Do you have a toothache?", a: "Yes, I do.", img: "Q2.png" },
-            { id: 3, q: "Do you have a fever?", a: "Yes, I do.", img: "Q3.png" },
-            { id: 4, q: "Do you have a stomachache?", a: "No, I don’t. I have a cold.", img: "Q4.png" },
-            { id: 5, q: "Do you have a headache?", a: "Yes, I do.", img: "Q5.png" }
+        const questions = [
+            { q: "Do you have a sore throat?", a: "No, I don’t. I have a runny nose.", img: "Q1.png" },
+            { q: "Do you have a toothache?", a: "Yes, I do.", img: "Q2.png" },
+            { q: "Do you have a fever?", a: "Yes, I do.", img: "Q3.png" },
+            { q: "Do you have a stomachache?", a: "No, I don’t. I have a cold.", img: "Q4.png" },
+            { q: "Do you have a headache?", a: "Yes, I do.", img: "Q5.png" }
         ];
 
         let scores = { A: 0, B: 0 };
+        let groups = { nameA: "GROUP A", membersA: "Charlie, Randy, Jadon, Irene, Jason", nameB: "GROUP B", membersB: "Sophia, Henry, Athena, James, Linda" };
         let currentIdx = 0;
-        const bgMusic = document.getElementById('bgMusic');
-        let isMusicPlaying = false;
+        let music = document.getElementById('bgMusic');
+        let audioStarted = false;
 
-        // AUTOMATIC AUDIO LOGIC
-        // Browsers require a user interaction to play sound.
-        // This function will attempt to play on first click anywhere on the page.
-        function initAudio() {
-            document.body.addEventListener('click', function() {
-                if(!isMusicPlaying) {
-                    toggleMusic();
-                }
-            }, { once: true });
-        }
-
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-        }
-
-        function toggleMusic() {
-            if (isMusicPlaying) {
-                bgMusic.pause();
-                document.getElementById('music-btn').innerText = '🔇';
-                isMusicPlaying = false;
-            } else {
-                bgMusic.play().catch(e => console.log("Audio waiting for interaction"));
-                document.getElementById('music-btn').innerText = '🎵';
-                isMusicPlaying = true;
+        // AUTO-START LOGIC
+        function autoStartAudio() {
+            if (!audioStarted) {
+                music.play().then(() => {
+                    audioStarted = true;
+                }).catch(e => console.log("Waiting for interaction..."));
             }
         }
 
-        function goToQuestion(index) {
-            currentIdx = index;
-            const data = gameData[index];
-            document.getElementById('q-prompt').innerText = data.q;
-            document.getElementById('q-img').src = data.img;
-            document.getElementById(`box${index+1}`).classList.add('used');
+        function toggleMusic(e) {
+            e.stopPropagation(); // Prevents autoStartAudio from firing simultaneously
+            if (music.paused) {
+                music.play();
+                document.getElementById('music-btn').innerText = '🎵';
+                audioStarted = true;
+            } else {
+                music.pause();
+                document.getElementById('music-btn').innerText = '🔇';
+            }
+        }
+
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function saveGroups() {
+            groups.nameA = document.getElementById('edit-nameA').value || "GROUP A";
+            groups.membersA = document.getElementById('edit-membersA').value;
+            groups.nameB = document.getElementById('edit-nameB').value || "GROUP B";
+            groups.membersB = document.getElementById('edit-membersB').value;
+            
+            document.getElementById('disp-nameA').innerText = groups.nameA;
+            document.getElementById('disp-membersA').innerText = groups.membersA;
+            document.getElementById('disp-nameB').innerText = groups.nameB;
+            document.getElementById('disp-membersB').innerText = groups.membersB;
+            
+            document.querySelectorAll('.gn-A').forEach(el => el.innerText = groups.nameA);
+            document.querySelectorAll('.gn-B').forEach(el => el.innerText = groups.nameB);
+            document.querySelector('.awardA').innerText = groups.nameA;
+            document.querySelector('.awardB').innerText = groups.nameB;
+            showPage('groups-page');
+        }
+
+        function startQ(i) {
+            currentIdx = i;
+            document.getElementById('q-prompt').innerText = questions[i].q;
+            document.getElementById('q-img').src = questions[i].img;
+            document.getElementById(`box${i+1}`).classList.add('used');
             showPage('question-page');
         }
 
-        function showAnswer() {
-            const data = gameData[currentIdx];
-            document.getElementById('a-img').src = data.img;
-            document.getElementById('a-text').innerText = data.a;
+        function showAns() {
+            document.getElementById('a-img').src = questions[currentIdx].img;
+            document.getElementById('a-text').innerText = questions[currentIdx].a;
             showPage('answer-page');
         }
 
-        function awardPoints(winner) {
-            if (winner === 'A') {
-                scores.A += 2;
-                scores.B += 1;
-            } else {
-                scores.B += 2;
-                scores.A += 1;
-            }
-            updateScoreDisplay();
+        function award(winner) {
+            if(winner === 'A') { scores.A += 2; scores.B += 1; }
+            else { scores.B += 2; scores.A += 1; }
+            updateScores();
             showPage('game-page');
         }
 
-        function updateManualScore(group, val) {
-            scores[group] += val;
-            if (scores[group] < 0) scores[group] = 0;
-            updateScoreDisplay();
+        function changeScore(g, v) {
+            scores[g] = Math.max(0, scores[g] + v);
+            updateScores();
         }
 
-        function updateScoreDisplay() {
+        function updateScores() {
             document.getElementById('scoreA').innerText = scores.A;
             document.getElementById('scoreB').innerText = scores.B;
         }
 
-        function finishGame() {
-            document.getElementById('finalA').innerText = scores.A;
-            document.getElementById('finalB').innerText = scores.B;
+        function showResults() {
+            document.getElementById('finA').innerText = scores.A;
+            document.getElementById('finB').innerText = scores.B;
             showPage('result-page');
         }
 
-        document.addEventListener('touchstart', function() {}, {passive: true});
+        // Initialize edit fields
+        document.getElementById('edit-nameA').value = groups.nameA;
+        document.getElementById('edit-membersA').value = groups.membersA;
+        document.getElementById('edit-nameB').value = groups.nameB;
+        document.getElementById('edit-membersB').value = groups.membersB;
     </script>
 </body>
 </html>

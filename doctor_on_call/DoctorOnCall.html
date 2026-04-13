@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kindergarten EFL Game</title>
+    <title>Kindergarten EFL Game - Fixed</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -53,44 +53,46 @@
 
         /* Content Overlay */
         .content-box {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 30px;
             padding: 40px;
-            max-width: 80%;
+            max-width: 85%;
             text-align: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        h1 { font-size: 3rem; color: #2f3542; margin-bottom: 20px; }
-        p { font-size: 2rem; color: #57606f; margin: 15px 0; line-height: 1.4; }
-        .sub-text { color: #ff4757; font-weight: 600; display: block; font-size: 1.5rem; }
+        h1 { font-size: 3.5rem; color: #2f3542; margin-bottom: 20px; }
+        p { font-size: 2.2rem; color: #2f3542; margin: 15px 0; line-height: 1.4; font-weight: 400; }
+        .sub-text { color: #ff4757; font-weight: 600; display: block; font-size: 1.8rem; margin-top: 5px; }
 
         /* 3D Vector Buttons */
         .btn-container {
             position: absolute;
-            bottom: 50px;
+            bottom: 40px;
             display: flex;
-            gap: 20px;
+            gap: 25px;
             justify-content: center;
             width: 100%;
+            padding: 0 20px;
         }
 
         .btn {
-            padding: 20px 40px;
+            padding: 20px 45px;
             font-size: 1.8rem;
             font-weight: 600;
             color: white;
             border: none;
-            border-radius: 20px;
+            border-radius: 25px;
             cursor: pointer;
-            box-shadow: 0 8px 0 #2f3542;
-            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 0 10px 0 #2f3542;
+            transition: all 0.1s;
             text-transform: uppercase;
-            min-width: 200px;
+            min-width: 220px;
+            font-family: 'Fredoka', sans-serif;
         }
 
         .btn:active {
-            transform: translateY(4px);
+            transform: translateY(6px);
             box-shadow: 0 4px 0 #2f3542;
         }
 
@@ -99,7 +101,7 @@
         .btn-red { background-color: var(--primary-color); }
         .btn-yellow { background-color: var(--ui-yellow); }
 
-        /* Scoreboard Grid */
+        /* Scoreboard Layout */
         .scoreboard-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -108,57 +110,55 @@
             max-height: 70vh;
             overflow-y: auto;
             padding: 20px;
+            margin-top: -50px;
         }
 
         .player-card {
             background: white;
-            padding: 15px 25px;
-            border-radius: 20px;
+            padding: 20px 30px;
+            border-radius: 25px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
         }
 
-        .player-info { display: flex; align-items: center; gap: 15px; }
-        .player-name { font-size: 2rem; font-weight: 600; color: #2f3542; }
-        .player-score { font-size: 2.5rem; font-weight: 600; color: var(--ui-blue); margin: 0 20px; }
-        .absent { color: #ccc !important; text-decoration: line-through; }
+        .player-info { display: flex; align-items: center; gap: 20px; }
+        .player-name { font-size: 2.2rem; font-weight: 600; color: #2f3542; }
+        .player-score { font-size: 3rem; font-weight: 600; color: var(--ui-blue); margin: 0 25px; min-width: 60px; text-align: center; }
+        .absent { color: #bdc3c7 !important; }
 
-        /* Toggle Button */
+        /* Toggle Button (Check/Ex) */
         .toggle-btn {
-            font-size: 1.5rem;
+            font-size: 2rem;
             border: none;
-            background: #eee;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            background: #f1f2f6;
+            border-radius: 15px;
+            width: 60px;
+            height: 60px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Music Toggle */
         #music-control {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 30px;
+            right: 30px;
             z-index: 100;
             background: white;
-            padding: 10px;
+            padding: 15px;
             border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             cursor: pointer;
-            font-size: 2rem;
-        }
-
-        /* Modal for adding players */
-        #player-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 200;
-            justify-content: center;
+            font-size: 2.5rem;
+            width: 70px;
+            height: 70px;
+            display: flex;
             align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
@@ -171,8 +171,8 @@
 
     <div id="home-screen" class="screen active">
         <div class="btn-container">
-            <button class="btn btn-blue" onclick="showScreen('instruction-1')">How to Play</button>
-            <button class="btn btn-green" onclick="showScreen('scoreboard-screen')">Scoreboard</button>
+            <button type="button" class="btn btn-blue" onclick="showScreen('instruction-1')">How to Play</button>
+            <button type="button" class="btn btn-green" onclick="showScreen('scoreboard-screen')">Scoreboard</button>
         </div>
     </div>
 
@@ -182,11 +182,11 @@
             <p>Each student gets a role. <span class="sub-text">👉 每位學生都有一個角色</span></p>
             <p>1 doctor, 1 sick person <span class="sub-text">👉 一位醫生，一位病人</span></p>
             <p>The doctor finds who is sick. <span class="sub-text">👉 醫生要找出生病的人</span></p>
-            <p>Doctor has 3 chances. <span class="sub-text">👉 醫生有三次機會猜</span></p>
+            <p>The doctor has three chances to guess. <span class="sub-text">👉 醫生有三次機會猜</span></p>
         </div>
         <div class="btn-container">
-            <button class="btn btn-red" onclick="showScreen('home-screen')">Home</button>
-            <button class="btn btn-blue" onclick="showScreen('instruction-2')">Next</button>
+            <button type="button" class="btn btn-red" onclick="showScreen('home-screen')">Home</button>
+            <button type="button" class="btn btn-blue" onclick="showScreen('instruction-2')">Next</button>
         </div>
     </div>
 
@@ -197,19 +197,19 @@
             <p>Others: "No, I don't."</p>
         </div>
         <div class="btn-container">
-            <button class="btn btn-yellow" onclick="showScreen('instruction-1')">Back</button>
-            <button class="btn btn-blue" onclick="showScreen('instruction-3')">Next</button>
+            <button type="button" class="btn btn-yellow" onclick="showScreen('instruction-1')">Back</button>
+            <button type="button" class="btn btn-blue" onclick="showScreen('instruction-3')">Next</button>
         </div>
     </div>
 
     <div id="instruction-3" class="screen">
         <div class="content-box">
-            <p>⭐ Doctor guesses: 2 points!</p>
-            <p>⭐ Doctor misses: Others get 1 point!</p>
+            <p>⭐ If the doctor guesses the sick person, the doctor gets 2 points.</p>
+            <p>⭐ If the doctor did not guess, the other students get 1 point each.</p>
         </div>
         <div class="btn-container">
-            <button class="btn btn-yellow" onclick="showScreen('instruction-2')">Back</button>
-            <button class="btn btn-red" onclick="showScreen('home-screen')">Home</button>
+            <button type="button" class="btn btn-yellow" onclick="showScreen('instruction-2')">Back</button>
+            <button type="button" class="btn btn-red" onclick="showScreen('home-screen')">Home</button>
         </div>
     </div>
 
@@ -217,13 +217,13 @@
         <div id="player-list" class="scoreboard-grid">
             </div>
         <div class="btn-container">
-            <button class="btn btn-red" onclick="showScreen('home-screen')">Home</button>
-            <button class="btn btn-blue" onclick="addPlayerPrompt()">Add Player</button>
+            <button type="button" class="btn btn-blue" onclick="addPlayerPrompt(event)">Edit Players</button>
+            <button type="button" class="btn btn-red" onclick="showScreen('home-screen')">Home</button>
         </div>
     </div>
 
     <script>
-        // Initial Data
+        // State Management
         let players = [
             { name: "Jadon", score: 0, active: true },
             { name: "Randy", score: 0, active: true },
@@ -245,7 +245,7 @@
                 bgMusic.pause();
                 document.getElementById('music-control').innerText = "🔇";
             } else {
-                bgMusic.play().catch(e => console.log("Audio requires user interaction"));
+                bgMusic.play().catch(e => console.log("Interaction required for audio"));
                 document.getElementById('music-control').innerText = "🎵";
             }
             musicPlaying = !musicPlaying;
@@ -271,9 +271,9 @@
                         <span class="player-name ${player.active ? '' : 'absent'}">${player.name}</span>
                     </div>
                     <div style="display: ${player.active ? 'flex' : 'none'}; align-items: center;">
-                        <button class="btn btn-red" style="min-width: 60px; padding: 10px;" onclick="updateScore(${index}, -1)">-</button>
+                        <button class="btn btn-red" style="min-width: 60px; padding: 10px; box-shadow: 0 4px 0 #2f3542;" onclick="updateScore(${index}, -1)">➖</button>
                         <span class="player-score">${player.score}</span>
-                        <button class="btn btn-green" style="min-width: 60px; padding: 10px;" onclick="updateScore(${index}, 1)">+</button>
+                        <button class="btn btn-green" style="min-width: 60px; padding: 10px; box-shadow: 0 4px 0 #2f3542;" onclick="updateScore(${index}, 1)">➕</button>
                     </div>
                 `;
                 list.appendChild(card);
@@ -291,20 +291,21 @@
             renderPlayers();
         }
 
-        function addPlayerPrompt() {
+        // UPDATED FUNCTION: Prevents full-screen refresh
+        function addPlayerPrompt(event) {
+            if (event) event.preventDefault(); // Stop page from resetting
+            
             const name = prompt("Enter new student name:");
-            if (name) {
-                players.push({ name: name, score: 0, active: true });
+            
+            if (name && name.trim() !== "") {
+                players.push({ 
+                    name: name.trim(), 
+                    score: 0, 
+                    active: true 
+                });
                 renderPlayers();
             }
         }
-
-        // Handle Audio play on first click for browsers
-        document.body.addEventListener('click', () => {
-            if(!musicPlaying) {
-                // Initial start optional
-            }
-        }, {once: true});
     </script>
 </body>
 </html>
