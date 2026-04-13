@@ -71,7 +71,7 @@
         </div>
 
         <div class="nav-menu" id="nav-grid">
-            <button class="btn-3d btn-blue" onclick="openGame('doctor_on_call/PickAPill.html')">Pick A Pill</button>
+            <button class="btn-3d btn-blue" onclick="openGame('pick_a_pill/PickAPill.html')">Pick A Pill</button>
             <button class="btn-3d btn-green" onclick="openGame('canva')">What's Wrong with Tim?</button>
             <button class="btn-3d btn-orange" onclick="openGame('figure_it_out/FigureItOut.html')">Figure It Out!</button>
             <button class="btn-3d btn-purple" onclick="openGame('doctor_on_call/DoctorOnCall.html')">Doctor on Call!</button>
@@ -101,7 +101,7 @@
         }
 
         function backToHub() {
-            frame.src = "about:blank";
+            frame.src = "about:blank"; 
             navGrid.style.display = 'grid';
             activityZone.style.display = 'none';
             homeBtn.style.display = 'none';
@@ -109,7 +109,9 @@
 
         function toggleFS() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {});
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log("Fullscreen blocked: " + err.message);
+                });
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
@@ -117,7 +119,7 @@
             }
         }
 
-        // Final safety: Stop the hub from reacting to any "submit" events from the iframe
+        // Prevents any form inside an activity from refreshing the main hub
         window.addEventListener('submit', function(e) {
             e.preventDefault();
         }, true);
