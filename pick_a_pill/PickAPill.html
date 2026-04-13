@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PICK A PILL!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4CAF50; --primary-dark: #388E3C;
+            --danger: #f44336; --danger-dark: #d32f2f;
+            --warning: #ff9800; --warning-dark: #f57c00;
+            --blue: #2196F3; --blue-dark: #1976D2;
+            --gold: #FFD700;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Fredoka', sans-serif; overflow: hidden; }
+
+        .page { display: none; width: 100vw; height: 100vh; background-size: cover; background-position: center; position: relative; flex-direction: column; align-items: center; justify-content: center; }
+        .active { display: flex; }
+
+        /* Backgrounds */
+        #home-page { background-image: url('home_page.png'); }
+        #game-page { background-image: url('game_page.png'); }
+        #question-page { background-image: url('question_page.png'); }
+        #result-yes { background-image: url('result_page_yes.png'); }
+        #result-no { background-image: url('result_page_no.png'); }
+        #final-result-page { background-image: url('final_result.png'); }
+
+        /* Header Controls (Home + Music) */
+        .top-controls {
+            position: absolute; top: 20px; right: 20px; z-index: 100;
+            display: flex; gap: 15px;
+        }
+
+        .icon-btn {
+            background: white; border-radius: 50%; width: 60px; height: 60px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border: 4px solid var(--blue); font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.1s;
+        }
+        .icon-btn:active { transform: scale(0.9); }
+
+        .btn-3d { 
+            padding: 15px 35px; font-size: 24px; font-weight: bold; color: white; 
+            border: none; border-radius: 15px; cursor: pointer; transition: all 0.1s; 
+            text-transform: uppercase; box-shadow: 0 8px 0 rgba(0,0,0,0.2); 
+            display: inline-block;
+        }
+        .btn-3d:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        .btn-green { background: var(--primary); border-bottom: 6px solid var(--primary-dark); }
+        .btn-orange { background: var(--warning); border-bottom: 6px solid var(--warning-dark); }
+        .btn-blue { background: var(--blue); border-bottom: 6px solid var(--blue-dark); }
+        .btn-red { background: var(--danger); border-bottom: 6px solid var(--danger-dark); }
+
+        .home-controls { position: absolute; bottom: 50px; left: 0; width: 100%; display: flex; justify-content: center; gap: 30px; }
+
+        /* Game Page Layout Modifications */
+        .game-container {
+            display: flex; width: 100%; height: 100%; align-items: center; justify-content: center;
+            padding-left: 50px; /* Space for scoreboard */
+        }
+
+        #scoreboard { 
+            position: absolute; left: 80px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 10px; width: 200px; 
+            z-index: 10;
+        }
+        .player-card { 
+            background: rgba(255,255,255,0.9); padding: 8px 15px; 
+            border-radius: 12px; border: 3px solid #333; font-size: 18px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+        }
+
+        .pill-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 40px; margin-left: 220px; }
+        .pill-item { width: 130px; height: 130px; cursor: pointer; }
+        .pill-icon { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        
+        #timer-display { position: absolute; top: 20px; font-size: 50px; color: var(--danger); background: white; padding: 5px 20px; border-radius: 25px; border: 4px solid var(--danger); }
+        .guess-img { max-height: 400px; width: auto; margin-bottom: 30px; border: 8px solid white; border-radius: 20px; }
+
+        .result-group-right { transform: translate(120px, 100px); text-align: center; } 
+        .result-group-left { transform: translate(-120px, 100px); text-align: center; } 
+        .result-answer { font-size: 45px; text-transform: uppercase; color: #333; font-weight: 800; margin: 15px 0; }
+        .points-text { font-size: 130px; color: #2E7D32; margin: 0; }
+
+        .leaderboard-container { background: rgba(255,255,255,0.85); padding: 30px; border-radius: 30px; border: 8px solid var(--blue); width: 80%; max-height: 70%; overflow-y: auto; text-align: center; }
+        
+        #player-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-height: 80%; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 0 50px rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto; }
+        .player-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; font-size: 24px; transition: color 0.3s; }
+        .player-row.inactive-player { color: #bbb; }
+
+        .how-list { list-style: none; padding: 0; margin: 20px 0; font-size: 28px; line-height: 1.6; text-align: left; }
+        .how-list li { margin-bottom: 15px; }
+    </style>
+</head>
+<body onload="initMusic()">
+
+    <audio id="game-bg-music" loop src="game_bg.mp3"></audio>
+    <audio id="sound-win" src="win.mp3"></audio>
+    <audio id="sound-try-again" src="try_again.mp3"></audio>
+
+    <div class="top-controls">
+        <div id="btn-home" class="icon-btn" onclick="location.reload()" title="Back to Home">🏠</div>
+        <div id="music-control" class="icon-btn" onclick="toggleMusic()">🔊</div>
+    </div>
+
+    <section id="home-page" class="page active">
+        <div class="home-controls">
+            <button class="btn-3d btn-blue" onclick="toggleModal('how-to-modal', true)">How to Play</button>
+            <button class="btn-3d btn-orange" onclick="toggleModal('player-modal', true)">Players</button>
+            <button class="btn-3d btn-green" onclick="startGame()">Start Game</button>
+        </div>
+    </section>
+
+    <section id="game-page" class="page">
+        <div class="game-container">
+            <div id="scoreboard"></div>
+            <div class="pill-grid" id="pill-grid"></div>
+        </div>
+    </section>
+
+    <section id="question-page" class="page">
+        <div id="timer-display">10</div>
+        <img id="guess-image" class="guess-img" src="">
+        <div style="display:flex; gap:30px">
+            <button class="btn-3d btn-green" onclick="submitAnswer(true)">CORRECT</button>
+            <button class="btn-3d btn-orange" onclick="submitAnswer(false)">TRY AGAIN</button>
+        </div>
+    </section>
+
+    <section id="result-yes" class="page">
+        <div class="result-group-right">
+            <p id="points-display" class="points-text">+1</p>
+            <div class="result-answer" id="ans-yes"></div>
+            <button class="btn-3d btn-green" onclick="nextTurn()">Back to Game</button>
+        </div>
+    </section>
+
+    <section id="result-no" class="page">
+        <div class="result-group-left">
+            <div class="result-answer" id="ans-no" style="margin-top: 0;"></div>
+            <button class="btn-3d btn-orange" onclick="nextTurn()">Back to Game</button>
+        </div>
+    </section>
+
+    <section id="final-result-page" class="page">
+        <div class="leaderboard-container">
+            <h1 style="font-size: 50px; color: var(--blue);">🏆 WINNERS 🏆</h1>
+            <div id="leaderboard-list"></div>
+        </div>
+        <button class="btn-3d btn-blue" style="margin-top: 20px;" onclick="location.reload()">Back to Home</button>
+    </section>
+
+    <div id="player-modal">
+        <h2 style="text-align:center">Student Roster</h2>
+        <div id="player-list-container"></div>
+        <button class="btn-3d btn-green" style="width:100%; margin-top:20px;" onclick="toggleModal('player-modal', false)">Save</button>
+    </div>
+
+    <div id="how-to-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); color:white; z-index:1001; justify-content:center; align-items:center; flex-direction:column; text-align:center; padding:40px;" onclick="toggleModal('how-to-modal', false)">
+        <h1>HOW TO PLAY</h1>
+        <ul class="how-list">
+            <li>1. Choose a pill.<br>👉 選一個藥丸</li>
+            <li>2. Say the word (body part or illness).<br>👉 說出單字（身體部位或疾病）</li>
+            <li>3. If correct, you get the points.<br>👉 答對得分</li>
+            <li>4. If incorrect, you get no points.<br>👉 答錯沒有得分</li>
+        </ul>
+        <p style="color:var(--blue); cursor:pointer;">(Tap to close)</p>
+    </div>
+
+    <script>
+        const baseVocab = [
+            {w:'headache', i:'headache.png'}, {w:'runny nose', i:'runny_nose.png'},
+            {w:'toothache', i:'toothache.png'}, {w:'stomachache', i:'stomachache.png'},
+            {w:'sore throat', i:'sore_throat.png'}, {w:'cold', i:'cold.png'},
+            {w:'fever', i:'fever.png'}, {w:'head', i:'head.png'},
+            {w:'ears', i:'ears.png'}, {w:'eyes', i:'eyes.png'},
+            {w:'mouth', i:'mouth.png'}, {w:'nose', i:'nose.png'},
+            {w:'hands', i:'hands.png'}, {w:'arms', i:'arms.png'},
+            {w:'legs', i:'legs.png'}, {w:'foot', i:'foot.png'},
+            {w:'feet', i:'feet.png'}, {w:'knees', i:'knees.png'}
+        ];
+
+        let vocabulary = [];
+        let timer;
+        let pillsLeft = 20;
+        let isMusicOn = false;
+
+        const bgMusic = document.getElementById('game-bg-music');
+        const winSnd = document.getElementById('sound-win');
+        const failSnd = document.getElementById('sound-try-again');
+
+        let players = [
+            {name: "Randy", score: 0, active: true}, {name: "Jadon", score: 0, active: true},
+            {name: "Charlie", score: 0, active: true}, {name: "Irene", score: 0, active: true},
+            {name: "Jason", score: 0, active: true}, {name: "Sophia", score: 0, active: true},
+            {name: "James", score: 0, active: true}, {name: "Athena", score: 0, active: true},
+            {name: "Henry", score: 0, active: true}, {name: "Linda", score: 0, active: true}
+        ];
+
+        let currentPlayerIdx = 0;
+        let activeItem = null;
+        let activeDiv = null;
+
+        function initMusic() {
+            // Browsers block autoplay until the user interacts.
+            // This attempts to play immediately, but users may need to click once.
+            bgMusic.play().then(() => {
+                isMusicOn = true;
+                document.getElementById('music-control').innerText = "🔊";
+            }).catch(() => {
+                isMusicOn = false;
+                document.getElementById('music-control').innerText = "🔇";
+            });
+        }
+
+        function toggleMusic() {
+            isMusicOn = !isMusicOn;
+            if(isMusicOn) { bgMusic.play(); document.getElementById('music-control').innerText = "🔊"; }
+            else { bgMusic.pause(); document.getElementById('music-control').innerText = "🔇"; }
+        }
+
+        function toggleModal(id, show) { document.getElementById(id).style.display = show ? (id==='how-to-modal'?'flex':'block') : 'none'; }
+
+        function renderPlayerList() {
+            const container = document.getElementById('player-list-container');
+            container.innerHTML = players.map((p, i) => `
+                <div class="player-row ${p.active ? '' : 'inactive-player'}">
+                    <span>${p.name}</span>
+                    <div>
+                        <button class="btn-3d btn-green" style="padding:5px 15px" onclick="setPlayerStatus(${i}, true)">✔</button>
+                        <button class="btn-3d btn-red" style="padding:5px 15px" onclick="setPlayerStatus(${i}, false)">✖</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setPlayerStatus(i, status) { players[i].active = status; renderPlayerList(); }
+
+        function startGame() {
+            // Fallback for autoplay: ensure music plays when start is clicked
+            if(!isMusicOn) { bgMusic.play(); isMusicOn = true; document.getElementById('music-control').innerText = "🔊"; }
+            
+            vocabulary = [...baseVocab, baseVocab[0], baseVocab[1]].sort(() => 0.5 - Math.random());
+            pillsLeft = 20;
+            showPage('game-page');
+            updateScoreboard();
+            renderGrid();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('pill-grid');
+            grid.innerHTML = '';
+            vocabulary.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'pill-item';
+                div.innerHTML = `<img src="pill.png" class="pill-icon">`;
+                div.onclick = () => {
+                    activeItem = item; activeDiv = div;
+                    document.getElementById('guess-image').src = item.i;
+                    showPage('question-page');
+                    startTimer();
+                };
+                grid.appendChild(div);
+            });
+        }
+
+        function startTimer() {
+            let left = 10;
+            document.getElementById('timer-display').innerText = left;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                left--;
+                document.getElementById('timer-display').innerText = left;
+                if(left <= 0) { clearInterval(timer); submitAnswer(false); }
+            }, 1000);
+        }
+
+        function submitAnswer(isCorrect) {
+            clearInterval(timer);
+            const activeList = players.filter(p => p.active);
+            if(activeList.length === 0) return;
+            const curP = activeList[currentPlayerIdx];
+
+            if(isCorrect) {
+                const r = Math.random() * 100;
+                let pts = r < 40 ? 1 : r < 70 ? 3 : 5;
+                players.find(p => p.name === curP.name).score += pts;
+                document.getElementById('points-display').innerText = "+" + pts;
+                document.getElementById('ans-yes').innerText = activeItem.w;
+                showPage('result-yes');
+                winSnd.currentTime = 0; winSnd.play();
+            } else {
+                document.getElementById('ans-no').innerText = activeItem.w;
+                showPage('result-no');
+                failSnd.currentTime = 0; failSnd.play();
+            }
+        }
+
+        function nextTurn() {
+            if(activeDiv) activeDiv.style.visibility = 'hidden';
+            pillsLeft--;
+            if(pillsLeft <= 0) {
+                showFinalResult();
+            } else {
+                const count = players.filter(p => p.active).length;
+                currentPlayerIdx = (currentPlayerIdx + 1) % count;
+                updateScoreboard();
+                showPage('game-page');
+            }
+        }
+
+        function showFinalResult() {
+            showPage('final-result-page');
+            const sorted = [...players.filter(p => p.active)].sort((a,b) => b.score - a.score);
+            document.getElementById('leaderboard-list').innerHTML = sorted.map((p, i) => `
+                <div style="font-size:24px; margin-bottom:10px;">${i+1}. ${p.name}: ${p.score}</div>
+            `).join('');
+        }
+
+        function updateScoreboard() {
+            const container = document.getElementById('scoreboard');
+            const activeList = players.filter(p => p.active);
+            container.innerHTML = activeList.map((p, i) => `
+                <div class="player-card" style="border-color:${i===currentPlayerIdx?'var(--blue)':'#333'}">
+                    <b>${p.name}</b>: ${p.score}
+                </div>
+            `).join('');
+        }
+
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        renderPlayerList();
+    </script>
+</body>
+</html>

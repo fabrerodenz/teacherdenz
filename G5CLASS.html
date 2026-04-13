@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Classroom Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --glossy-blue: linear-gradient(180deg, #4da3ff 0%, #1e90ff 50%, #005ecb 100%);
+            --glossy-purple: linear-gradient(180deg, #b388ff 0%, #7209b7 50%, #4a0082 100%);
+            --glossy-green: linear-gradient(180deg, #81f0a3 0%, #2ed573 50%, #1a9650 100%);
+            --glossy-red: linear-gradient(180deg, #ff8a8a 0%, #ff4757 50%, #b30010 100%);
+            --glossy-gold: linear-gradient(180deg, #ffe066 0%, #ffa502 50%, #cc8400 100%);
+            --btn-shadow: 0 10px 0 #222, 0 15px 25px rgba(0,0,0,0.4);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            font-family: 'Fredoka', sans-serif; overflow: hidden; background: #000; 
+        }
+        
+        .layer { display: none; width: 100vw; height: 100vh; position: absolute; top:0; left:0; background: #fff; }
+        .active-layer { display: block; }
+
+        #master-home { 
+            background-image: url('master_home_page.png'); 
+            background-size: cover; 
+            background-position: center; 
+        }
+
+        .menu-grid { 
+            position: absolute; right: 5%; 
+            bottom: 12%; 
+            width: 42%; height: 48%; 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; 
+        }
+
+        .m-btn { 
+            border: 4px solid rgba(255,255,255,0.9); border-radius: 25px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 700; cursor: pointer; text-align: center; 
+            padding: 15px; text-transform: uppercase; 
+            font-size: 1.5rem; 
+            color: white;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+            box-shadow: var(--btn-shadow);
+            transition: all 0.1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .m-btn::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+            background: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.05));
+            pointer-events: none;
+        }
+
+        .m-btn:active { transform: translateY(8px); box-shadow: 0 2px 0 #222; }
+
+        .exit-btn { 
+            position: fixed; top: 15px; left: 15px; z-index: 10000; 
+            padding: 12px 25px; background: var(--glossy-red); color: white; 
+            border: 3px solid white; border-radius: 30px; 
+            cursor: pointer; font-weight: 700; font-size: 1.1rem;
+            box-shadow: 0 5px 0 #800, 0 8px 15px rgba(0,0,0,0.3);
+        }
+
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+
+    <div id="master-home" class="layer active-layer">
+        <div class="menu-grid">
+            <div class="m-btn" style="background:var(--glossy-blue)" onclick="showLayer('layer-pill')">Pick A Pill</div>
+            <div class="m-btn" style="background:var(--glossy-purple)" onclick="showLayer('layer-canva')">What's Wrong?</div>
+            <div class="m-btn" style="background:var(--glossy-green)" onclick="showLayer('layer-figure')">Figure It Out</div>
+            <div class="m-btn" style="background:var(--glossy-red)" onclick="showLayer('layer-doctor')">Doctor On Call</div>
+            <div class="m-btn" style="grid-column: span 2; background:var(--glossy-gold)" onclick="showLayer('layer-quick')">Quick Check</div>
+        </div>
+    </div>
+
+    <div id="layer-canva" class="layer">
+        <button class="exit-btn" onclick="showLayer('master-home')">🏠 HOME</button>
+        <iframe id="frame-canva" data-src="https://www.canva.com/design/DAHGbjNDFRw/aWJS5QKR8OmFB-bKDOFqgQ/view?embed"></iframe>
+    </div>
+
+    <div id="layer-pill" class="layer">
+        <button class="exit-btn" onclick="showLayer('master-home')">🏠 HOME</button>
+        <iframe id="frame-pill" data-src="pick_a_pill/PickAPill.html"></iframe>
+    </div>
+
+    <div id="layer-figure" class="layer">
+        <button class="exit-btn" onclick="showLayer('master-home')">🏠 HOME</button>
+        <iframe id="frame-figure" data-src="figure_it_out/FigureItOut.html"></iframe>
+    </div>
+
+    <div id="layer-doctor" class="layer">
+        <button class="exit-btn" onclick="showLayer('master-home')">🏠 HOME</button>
+        <iframe id="frame-doctor" data-src="doctor_on_call/DoctorOnCall.html"></iframe>
+    </div>
+
+    <div id="layer-quick" class="layer">
+        <button class="exit-btn" onclick="showLayer('master-home')">🏠 HOME</button>
+        <iframe id="frame-quick" data-src="quick_check/QuickCheck.html"></iframe>
+    </div>
+
+    <script>
+        function showLayer(id) {
+            // Hide all layers and stop their audio
+            document.querySelectorAll('.layer').forEach(l => {
+                l.classList.remove('active-layer');
+                const frame = l.querySelector('iframe');
+                if (frame) {
+                    frame.src = "about:blank"; 
+                }
+            });
+
+            // Show selected layer
+            const activeLayer = document.getElementById(id);
+            activeLayer.classList.add('active-layer');
+
+            // Load the specific activity into the iframe
+            const activeFrame = activeLayer.querySelector('iframe');
+            if (activeFrame && activeFrame.hasAttribute('data-src')) {
+                activeFrame.src = activeFrame.getAttribute('data-src');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Figure it Out!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF5722;
+            --secondary: #4CAF50;
+            --accent: #2196F3;
+            --yellow: #FFC107;
+            --purple: #9C27B0;
+            --white: #FFFFFF;
+            --shadow: 0 8px 0 rgba(0,0,0,0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Fredoka', sans-serif;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        .page {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: absolute;
+            top: 0;
+            left: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .active { display: flex; animation: pop 0.3s ease; }
+
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #home-page { background-image: url('home_page.png'); }
+        #game-page { background-image: url('game_page.png'); }
+        #question-page { background-image: url('question_page.png'); }
+        #answer-page { background-image: url('answer_page.png'); }
+        #result-page { background-image: url('final_result.png'); }
+
+        .btn {
+            padding: 20px 40px;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: white;
+            background: var(--primary);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 0 #d84315;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.1s;
+            text-align: center;
+        }
+
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 4px 0 #d84315;
+        }
+
+        .btn-green { background: var(--secondary); box-shadow: 0 10px 0 #2e7d32; }
+        .btn-green:active { box-shadow: 0 4px 0 #2e7d32; }
+        
+        .btn-blue { background: var(--accent); box-shadow: 0 10px 0 #1565c0; }
+        .btn-blue:active { box-shadow: 0 4px 0 #1565c0; }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 30px; /* Moved slightly downward */
+            display: flex;
+            gap: 20px;
+        }
+
+        .scoreboard-container {
+            position: absolute;
+            top: 8%; /* Moved slightly downward from 5% */
+            display: flex;
+            gap: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px 40px;
+            border-radius: 30px;
+            border: 6px solid var(--accent);
+            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+        }
+
+        .score-box { text-align: center; }
+        .score-name { font-size: 1.5rem; color: #333; margin-bottom: 5px; }
+        .score-num { font-size: 4rem; font-weight: bold; color: var(--primary); }
+        .score-controls button {
+            background: #eee; border: none; font-size: 2rem; 
+            padding: 5px 15px; border-radius: 10px; cursor: pointer;
+        }
+
+        .number-container {
+            display: flex;
+            gap: 25px;
+            margin-top: 100px;
+        }
+
+        .num-box {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 25px;
+            font-size: 4rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 12px 0 rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .num-box span { font-size: 1rem; margin-top: 5px; }
+        .num-box.used { opacity: 0.4; filter: grayscale(1); pointer-events: none; }
+
+        .instruction-content {
+            background: white;
+            padding: 50px;
+            border-radius: 40px;
+            text-align: center;
+            font-size: 2.2rem;
+            line-height: 1.8;
+            box-shadow: 0 20px 0 rgba(0,0,0,0.1);
+        }
+
+        .question-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80%;
+        }
+
+        .display-img {
+            max-height: 45vh;
+            border-radius: 20px;
+            border: 10px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .q-text { font-size: 3.5rem; color: #333; background: white; padding: 10px 30px; border-radius: 20px; margin-bottom: 20px; text-align: center; }
+
+        #music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body onload="initAudio()">
+
+    <audio id="bgMusic" loop>
+        <source src="game_bg.mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="music-btn" onclick="toggleMusic()">🎵</button>
+
+    <div id="home-page" class="page active">
+        <div class="bottom-nav">
+            <button class="btn btn-blue" onclick="showPage('how-to-page')">How to Play</button>
+            <button class="btn btn-green" onclick="showPage('game-page')">Start Game</button>
+            <button class="btn btn-blue" onclick="showPage('groups-page')">Groups</button>
+        </div>
+    </div>
+
+    <div id="how-to-page" class="page" style="background-color: #FFEB3B;">
+        <div class="instruction-content">
+            <b>Go to the front.</b> <span style="color:var(--primary)">👉 到前面</span><br>
+            <b>Look at the picture.</b> <span style="color:var(--primary)">👉 看圖片</span><br>
+            <b>Write your answer on your whiteboard.</b> <span style="color:var(--primary)">👉 在白板上寫下答案</span><br>
+            <b>Press the buzzer when you finish writing.</b> <span style="color:var(--primary)">👉 寫完後按按鈕</span><br>
+            <b>Read the sentence with your group.</b> <span style="color:var(--primary)">👉 和小組一起唸句子</span>
+        </div>
+        <button class="btn" style="margin-top: 40px;" onclick="showPage('home-page')">BACK</button>
+    </div>
+
+    <div id="groups-page" class="page" style="background-color: #E1F5FE;">
+        <div style="display: flex; gap: 40px;">
+            <div class="instruction-content">
+                <h2 style="color:var(--accent); margin:0">GROUP A</h2>
+                <hr>
+                Charlie, Randy, Jadon,<br>Irene, Jason
+            </div>
+            <div class="instruction-content">
+                <h2 style="color:var(--primary); margin:0">GROUP B</h2>
+                <hr>
+                Sophia, Henry, Athena,<br>James, Linda
+            </div>
+        </div>
+        <button class="btn" style="margin-top: 40px;" onclick="showPage('home-page')">BACK</button>
+    </div>
+
+    <div id="game-page" class="page">
+        <div class="scoreboard-container">
+            <div class="score-box">
+                <div class="score-name">Group A</div>
+                <div id="scoreA" class="score-num">0</div>
+                <div class="score-controls">
+                    <button onclick="updateManualScore('A', 1)">➕</button>
+                    <button onclick="updateManualScore('A', -1)">➖</button>
+                </div>
+            </div>
+            <div style="width: 2px; background: #ccc;"></div>
+            <div class="score-box">
+                <div class="score-name">Group B</div>
+                <div id="scoreB" class="score-num">0</div>
+                <div class="score-controls">
+                    <button onclick="updateManualScore('B', 1)">➕</button>
+                    <button onclick="updateManualScore('B', -1)">➖</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="number-container">
+            <div class="num-box" id="box1" style="background: #f44336;" onclick="goToQuestion(0)">1<span>Q1</span></div>
+            <div class="num-box" id="box2" style="background: #2196F3;" onclick="goToQuestion(1)">2<span>Q2</span></div>
+            <div class="num-box" id="box3" style="background: #4CAF50;" onclick="goToQuestion(2)">3<span>Q3</span></div>
+            <div class="num-box" id="box4" style="background: #FF9800;" onclick="goToQuestion(3)">4<span>Q4</span></div>
+            <div class="num-box" id="box5" style="background: #9C27B0;" onclick="goToQuestion(4)">5<span>Q5</span></div>
+        </div>
+
+        <div class="bottom-nav">
+            <button class="btn" onclick="showPage('home-page')">BACK TO HOME</button>
+            <button class="btn btn-green" onclick="finishGame()">FINAL RESULT</button>
+        </div>
+    </div>
+
+    <div id="question-page" class="page">
+        <div class="question-content">
+            <div id="q-prompt" class="q-text"></div>
+            <img id="q-img" src="" class="display-img">
+            <button class="btn btn-green" onclick="showAnswer()">SHOW THE ANSWER</button>
+        </div>
+    </div>
+
+    <div id="answer-page" class="page">
+        <div class="question-content">
+            <img id="a-img" src="" class="display-img">
+            <div id="a-text" class="q-text" style="color: var(--secondary); font-weight: bold;"></div>
+            <p style="font-size: 1.5rem; margin: 0;">Who got it?</p>
+            <div style="display:flex; gap:20px;">
+                <button class="btn btn-blue" onclick="awardPoints('A')">Group A</button>
+                <button class="btn btn-blue" onclick="awardPoints('B')">Group B</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-page" class="page">
+        <div class="instruction-content" style="padding: 80px;">
+            <h1 style="font-size: 5rem; margin-top: 0;">GAME OVER!</h1>
+            <div style="display: flex; gap: 100px; justify-content: center;">
+                <div>
+                    <h3>GROUP A</h3>
+                    <div id="finalA" style="font-size: 6rem; color: var(--accent);">0</div>
+                </div>
+                <div>
+                    <h3>GROUP B</h3>
+                    <div id="finalB" style="font-size: 6rem; color: var(--primary);">0</div>
+                </div>
+            </div>
+        </div>
+        <button class="btn" style="margin-top: 40px;" onclick="location.reload()">PLAY AGAIN</button>
+    </div>
+
+    <script>
+        // UPDATED QUESTIONS AND ANSWERS
+        const gameData = [
+            { id: 1, q: "Do you have a sore throat?", a: "No, I don’t. I have a runny nose.", img: "Q1.png" },
+            { id: 2, q: "Do you have a toothache?", a: "Yes, I do.", img: "Q2.png" },
+            { id: 3, q: "Do you have a fever?", a: "Yes, I do.", img: "Q3.png" },
+            { id: 4, q: "Do you have a stomachache?", a: "No, I don’t. I have a cold.", img: "Q4.png" },
+            { id: 5, q: "Do you have a headache?", a: "Yes, I do.", img: "Q5.png" }
+        ];
+
+        let scores = { A: 0, B: 0 };
+        let currentIdx = 0;
+        const bgMusic = document.getElementById('bgMusic');
+        let isMusicPlaying = false;
+
+        // AUTOMATIC AUDIO LOGIC
+        // Browsers require a user interaction to play sound.
+        // This function will attempt to play on first click anywhere on the page.
+        function initAudio() {
+            document.body.addEventListener('click', function() {
+                if(!isMusicPlaying) {
+                    toggleMusic();
+                }
+            }, { once: true });
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                document.getElementById('music-btn').innerText = '🔇';
+                isMusicPlaying = false;
+            } else {
+                bgMusic.play().catch(e => console.log("Audio waiting for interaction"));
+                document.getElementById('music-btn').innerText = '🎵';
+                isMusicPlaying = true;
+            }
+        }
+
+        function goToQuestion(index) {
+            currentIdx = index;
+            const data = gameData[index];
+            document.getElementById('q-prompt').innerText = data.q;
+            document.getElementById('q-img').src = data.img;
+            document.getElementById(`box${index+1}`).classList.add('used');
+            showPage('question-page');
+        }
+
+        function showAnswer() {
+            const data = gameData[currentIdx];
+            document.getElementById('a-img').src = data.img;
+            document.getElementById('a-text').innerText = data.a;
+            showPage('answer-page');
+        }
+
+        function awardPoints(winner) {
+            if (winner === 'A') {
+                scores.A += 2;
+                scores.B += 1;
+            } else {
+                scores.B += 2;
+                scores.A += 1;
+            }
+            updateScoreDisplay();
+            showPage('game-page');
+        }
+
+        function updateManualScore(group, val) {
+            scores[group] += val;
+            if (scores[group] < 0) scores[group] = 0;
+            updateScoreDisplay();
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('scoreA').innerText = scores.A;
+            document.getElementById('scoreB').innerText = scores.B;
+        }
+
+        function finishGame() {
+            document.getElementById('finalA').innerText = scores.A;
+            document.getElementById('finalB').innerText = scores.B;
+            showPage('result-page');
+        }
+
+        document.addEventListener('touchstart', function() {}, {passive: true});
+    </script>
+</body>
+</html>

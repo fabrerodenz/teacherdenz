@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quick Check!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glossy-red: linear-gradient(180deg, #ff8a8a 0%, #ff4d4d 50%, #e60000 100%);
+            --glossy-teal: linear-gradient(180deg, #7cf2e1 0%, #4ecdc4 50%, #2fb0a7 100%);
+            --glossy-gold: linear-gradient(180deg, #ffe066 0%, #ffcc00 50%, #cca300 100%);
+            --btn-shadow: 0 10px 0 #222, 0 15px 25px rgba(0,0,0,0.4);
+            --btn-active-shadow: 0 3px 0 #222, 0 8px 10px rgba(0,0,0,0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Fredoka', sans-serif;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        .page {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        .active { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+
+        #home-page { 
+            background-image: url('home_page.png'); 
+        }
+
+        #flashcard-page { 
+            background-image: url('flashcard_page.png'); 
+            padding-top: 5vh; 
+        }
+
+        /* 3D Glossy UI Buttons */
+        .btn-modern {
+            cursor: pointer;
+            border: 4px solid rgba(255,255,255,0.9);
+            border-radius: 60px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            box-shadow: var(--btn-shadow);
+            transition: all 0.1s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
+
+        .btn-modern::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 50%;
+            background: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.05));
+            pointer-events: none;
+        }
+
+        /* Home Page Start Button (Bottom Center) */
+        .btn-start { 
+            background: var(--glossy-gold); 
+            color: #222; 
+            padding: 25px 80px;
+            font-size: 3rem;
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .btn-shuffle { 
+            background: var(--glossy-teal); 
+            padding: 20px 60px;
+            font-size: 2.5rem;
+        }
+
+        .btn-home { 
+            background: var(--glossy-red); 
+            font-size: 1.2rem; 
+            padding: 12px 30px; 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            box-shadow: 0 5px 0 #222;
+        }
+
+        .btn-modern:active {
+            transform: translateX(-50%) translateY(8px) !important; /* Specific for Start button */
+            box-shadow: var(--btn-active-shadow);
+        }
+        
+        /* Shuffle button override for active state (no translate X) */
+        .btn-shuffle:active {
+            transform: translateY(8px) !important;
+        }
+
+        /* Seamless Flashcard Layout */
+        .card-container {
+            width: 78vw; 
+            max-height: 62vh;
+            aspect-ratio: 1920 / 1080;
+            perspective: 2000px;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flipped { transform: rotateY(180deg); }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            /* Seamless border: using color-match or transparent */
+            border: 2px solid rgba(255,255,255,0.2); 
+            border-radius: 10px;
+            background-color: transparent; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card-face img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .card-back { transform: rotateY(180deg); }
+
+        .controls {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: auto;
+            margin-bottom: 40px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="home-page" class="page active">
+        <button class="btn-modern btn-start" onclick="showFlashcards()">START</button>
+    </div>
+
+    <div id="flashcard-page" class="page">
+        <button class="btn-modern btn-home" onclick="goHome()">HOME</button>
+
+        <div class="card-container" onclick="flipCard()">
+            <div id="card-inner" class="card-inner">
+                <div class="card-face card-front">
+                    <img id="img-front" src="" alt="Front">
+                </div>
+                <div class="card-face card-back">
+                    <img id="img-back" src="" alt="Back">
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-modern btn-shuffle" onclick="shuffleCard()">SHUFFLE</button>
+        </div>
+    </div>
+
+    <script>
+        const pairs = [
+            {f: 'A_arms.png', b: 'B_arms.png'}, {f: 'A_cold.png', b: 'B_cold.png'},
+            {f: 'A_ears.png', b: 'B_ears.png'}, {f: 'A_eyes.png', b: 'B_eyes.png'},
+            {f: 'A_feet.png', b: 'B_feet.png'}, {f: 'A_fever.png', b: 'B_fever.png'},
+            {f: 'A_foot.png', b: 'B_foot.png'}, {f: 'A_hands.png', b: 'B_hands.png'},
+            {f: 'A_head.png', b: 'B_head.png'}, {f: 'A_headache.png', b: 'B_headache.png'},
+            {f: 'A_knees.png', b: 'B_knees.png'}, {f: 'A_legs.png', b: 'B_legs.png'},
+            {f: 'A_mouth.png', b: 'B_mouth.png'}, {f: 'A_nose.png', b: 'B_nose.png'},
+            {f: 'A_runny_nose.png', b: 'B_runny_nose.png'}, {f: 'A_sore_throat.png', b: 'B_sore_throat.png'},
+            {f: 'A_stomachache.png', b: 'B_stomachache.png'}, {f: 'A_toothache.png', b: 'B_toothache.png'}
+        ];
+
+        let availableIndices = [];
+        const cardInner = document.getElementById('card-inner');
+        const imgFront = document.getElementById('img-front');
+        const imgBack = document.getElementById('img-back');
+
+        function showFlashcards() {
+            document.getElementById('home-page').classList.remove('active');
+            document.getElementById('flashcard-page').classList.add('active');
+            shuffleCard();
+        }
+
+        function goHome() {
+            document.getElementById('flashcard-page').classList.remove('active');
+            document.getElementById('home-page').classList.add('active');
+        }
+
+        function flipCard() {
+            cardInner.classList.toggle('flipped');
+        }
+
+        function shuffleCard() {
+            cardInner.style.transition = 'none';
+            cardInner.classList.remove('flipped');
+            
+            if (availableIndices.length === 0) {
+                availableIndices = [...Array(pairs.length).keys()];
+            }
+
+            const randomIndex = Math.floor(Math.random() * availableIndices.length);
+            const pairIndex = availableIndices.splice(randomIndex, 1)[0];
+            const selectedPair = pairs[pairIndex];
+
+            imgFront.src = selectedPair.f;
+            imgBack.src = selectedPair.b;
+
+            setTimeout(() => {
+                cardInner.style.transition = 'transform 0.75s cubic-bezier(0.4, 0, 0.2, 1)';
+            }, 50);
+        }
+
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>
