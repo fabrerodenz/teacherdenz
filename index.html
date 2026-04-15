@@ -4,19 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Class Observation Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --blue: #4CC9FE; --green: #6BCB77; --orange: #FF9F43; --purple: #A29BFE;
-            --gloss: rgba(255, 255, 255, 0.3);
+            --gloss: rgba(255, 255, 255, 0.5);
+            --depth: 12px;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Fredoka', sans-serif; overflow: hidden; background-color: #000; }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none; 
+        }
+
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            font-family: 'Fredoka', sans-serif; overflow: hidden; 
+            background-color: #000; 
+        }
         
         #hub-container {
             position: relative; width: 100vw; height: 100vh;
             background: url('master_home_page.png') no-repeat center center;
             background-size: cover;
+        }
+
+        /* --- 3D NEUMORPHIC SCOREBOARD STYLE --- */
+        .scoreboard {
+            background: #f0f0f0;
+            border-radius: 40px;
+            padding: 15px 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+            border: 4px solid white;
         }
 
         #activity-zone {
@@ -27,38 +53,62 @@
         iframe { width: 100%; height: 100%; border: none; display: block; }
 
         .nav-menu {
-            position: absolute; right: 4%; top: 45%; bottom: 5%; width: 40%;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; z-index: 5;
+            position: absolute; right: 4%; top: 45%; bottom: 5%; width: 42%;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 25px; z-index: 5;
         }
 
+        /* --- SQUISHY BOUNCY BUTTONS --- */
         .btn-3d {
-            border: none; border-radius: 20px; color: white; font-family: 'Fredoka', sans-serif;
-            font-weight: 600; font-size: 1.3rem; cursor: pointer; display: flex;
-            align-items: center; justify-content: center; text-align: center;
-            padding: 15px; position: relative; transition: all 0.1s;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            border: none;
+            border-radius: 50px; /* Rounded 30-50px */
+            color: white;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700; /* Bolder */
+            font-size: 1.6rem; /* Bigger/Readable */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            
+            /* Smooth Bounce Transition */
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .btn-blue { background: var(--blue); box-shadow: 0 8px 0 #2a9ccb, 0 12px 15px rgba(0,0,0,0.3); }
-        .btn-green { background: var(--green); box-shadow: 0 8px 0 #4a9e55, 0 12px 15px rgba(0,0,0,0.3); }
-        .btn-orange { background: var(--orange); box-shadow: 0 8px 0 #cc7f35, 0 12px 15px rgba(0,0,0,0.3); }
-        .btn-purple { background: var(--purple); box-shadow: 0 8px 0 #7b75cb, 0 12px 15px rgba(0,0,0,0.3); }
-
+        /* Glossy Highlight */
         .btn-3d::after {
-            content: ''; position: absolute; top: 4px; left: 8px; right: 8px; height: 35%;
-            background: var(--gloss); border-radius: 15px 15px 4px 4px;
+            content: ''; position: absolute; top: 6px; left: 15px; right: 15px; height: 30%;
+            background: var(--gloss); border-radius: 40px 40px 10px 10px;
+            pointer-events: none;
         }
 
-        .btn-3d:active { transform: translateY(6px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        /* Color Variations with Shadows */
+        .btn-blue   { background: var(--blue);   box-shadow: 0 var(--depth) 0 #2a9ccb, 0 15px 25px rgba(0,0,0,0.3); }
+        .btn-green  { background: var(--green);  box-shadow: 0 var(--depth) 0 #4a9e55, 0 15px 25px rgba(0,0,0,0.3); }
+        .btn-orange { background: var(--orange); box-shadow: 0 var(--depth) 0 #cc7f35, 0 15px 25px rgba(0,0,0,0.3); }
+        .btn-purple { background: var(--purple); box-shadow: 0 var(--depth) 0 #7b75cb, 0 15px 25px rgba(0,0,0,0.3); }
+
+        /* Squishy Interaction */
+        .btn-3d:active {
+            transform: translateY(8px) scale(0.95); /* Squish down and shrink slightly */
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.2);
+        }
+
         .span-2 { grid-column: span 2; }
 
-        .control-bar { position: absolute; top: 20px; left: 20px; display: flex; gap: 15px; z-index: 100; }
+        /* Controls */
+        .control-bar { position: absolute; top: 25px; left: 25px; display: flex; gap: 20px; z-index: 100; }
         .circle-btn {
-            width: 65px; height: 65px; background: white; border: 4px solid var(--blue);
-            border-radius: 50%; cursor: pointer; font-size: 1.8rem;
+            width: 75px; height: 75px; background: white; border: 6px solid var(--blue);
+            border-radius: 50%; cursor: pointer; font-size: 2rem;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        .circle-btn:active { transform: scale(0.8); }
         #home-btn { display: none; border-color: var(--orange); }
     </style>
 </head>
@@ -71,11 +121,11 @@
         </div>
 
         <div class="nav-menu" id="nav-grid">
-            <button class="btn-3d btn-blue" onclick="openGame('pick_a_pill/PickAPill.html')">Pick A Pill</button>
-            <button class="btn-3d btn-green" onclick="openGame('canva')">What's Wrong with Tim?</button>
-            <button class="btn-3d btn-orange" onclick="openGame('figure_it_out/FigureItOut.html')">Figure It Out!</button>
-            <button class="btn-3d btn-purple" onclick="openGame('doctor_on_call/DoctorOnCall.html')">Doctor on Call!</button>
-            <button class="btn-3d btn-blue span-2" onclick="openGame('quick_check/QuickCheck.html')">Quick Check</button>
+            <button class="btn-3d btn-blue" onclick="openGame('pick_a_pill/PickAPill.html')">PICK A PILL</button>
+            <button class="btn-3d btn-green" onclick="openGame('canva')">WHAT'S WRONG WITH TIM?</button>
+            <button class="btn-3d btn-orange" onclick="openGame('figure_it_out/FigureItOut.html')">FIGURE IT OUT!</button>
+            <button class="btn-3d btn-purple" onclick="openGame('doctor_on_call/DoctorOnCall.html')">DOCTOR ON CALL!</button>
+            <button class="btn-3d btn-blue span-2" onclick="openGame('quick_check/QuickCheck.html')">QUICK CHECK</button>
         </div>
 
         <div id="activity-zone">
@@ -101,7 +151,7 @@
         }
 
         function backToHub() {
-            frame.src = "about:blank"; 
+            frame.src = "about:blank";
             navGrid.style.display = 'grid';
             activityZone.style.display = 'none';
             homeBtn.style.display = 'none';
@@ -109,17 +159,12 @@
 
         function toggleFS() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.log("Fullscreen blocked: " + err.message);
-                });
+                document.documentElement.requestFullscreen().catch(err => {});
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
+                document.exitFullscreen();
             }
         }
 
-        // Prevents any form inside an activity from refreshing the main hub
         window.addEventListener('submit', function(e) {
             e.preventDefault();
         }, true);

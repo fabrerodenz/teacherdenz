@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kindergarten EFL Game - Fixed</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <title>EFL Game - Classroom Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #ff4757;
-            --secondary-color: #2ed573;
-            --ui-blue: #1e90ff;
-            --ui-yellow: #ffa502;
-            --bg-gray: #f1f2f6;
+            --primary: #ff4757;
+            --secondary: #2ed573;
+            --blue: #1e90ff;
+            --yellow: #ffa502;
+            --white: #ffffff;
         }
 
         * {
@@ -30,7 +30,6 @@
             background-color: #000;
         }
 
-        /* Screen Containers */
         .screen {
             display: none;
             width: 100%;
@@ -46,125 +45,110 @@
 
         .active { display: flex; }
 
-        /* Specific Backgrounds */
+        /* Backgrounds */
         #home-screen { background-image: url('home_page.png'); }
         #instruction-1, #instruction-2, #instruction-3 { background-image: url('instruction_page.png'); }
         #scoreboard-screen { background-image: url('scoreboard_page.png'); }
 
-        /* Content Overlay */
         .content-box {
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 30px;
+            border-radius: 50px;
             padding: 40px;
             max-width: 85%;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 1100px;
+            border: 8px solid white;
         }
 
-        h1 { font-size: 3.5rem; color: #2f3542; margin-bottom: 20px; }
-        p { font-size: 2.2rem; color: #2f3542; margin: 15px 0; line-height: 1.4; font-weight: 400; }
-        .sub-text { color: #ff4757; font-weight: 600; display: block; font-size: 1.8rem; margin-top: 5px; }
+        .text-center { text-align: center; }
+        .text-justify { text-align: justify; text-justify: inter-word; }
 
-        /* 3D Vector Buttons */
+        .instruction-line {
+            font-size: 2.6rem;
+            color: #2f3542;
+            margin: 35px 0;
+            font-weight: 700;
+            display: block;
+        }
+
+        /* 3D Neumorphic / Glossy Buttons */
         .btn-container {
             position: absolute;
-            bottom: 40px;
+            bottom: 30px; /* Moved downward */
             display: flex;
-            gap: 25px;
+            gap: 30px;
             justify-content: center;
             width: 100%;
-            padding: 0 20px;
         }
 
         .btn {
-            padding: 20px 45px;
-            font-size: 1.8rem;
-            font-weight: 600;
+            padding: 22px 55px;
+            font-size: 2rem;
+            font-weight: 700;
             color: white;
             border: none;
-            border-radius: 25px;
+            border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 10px 0 #2f3542;
-            transition: all 0.1s;
             text-transform: uppercase;
-            min-width: 220px;
-            font-family: 'Fredoka', sans-serif;
+            position: relative;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background-image: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 40%, rgba(0,0,0,0.1) 100%);
         }
 
-        .btn:active {
-            transform: translateY(6px);
-            box-shadow: 0 4px 0 #2f3542;
-        }
+        .btn:active { transform: scale(0.85); }
 
-        .btn-blue { background-color: var(--ui-blue); }
-        .btn-green { background-color: var(--secondary-color); }
-        .btn-red { background-color: var(--primary-color); }
-        .btn-yellow { background-color: var(--ui-yellow); }
+        .btn-blue { background-color: var(--blue); }
+        .btn-green { background-color: var(--secondary); }
+        .btn-red { background-color: var(--primary); }
+        .btn-yellow { background-color: var(--yellow); }
 
-        /* Scoreboard Layout */
+        /* Scoreboard Grid */
         .scoreboard-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 15px;
             width: 90%;
             max-height: 70vh;
             overflow-y: auto;
             padding: 20px;
-            margin-top: -50px;
+            margin-top: -60px;
         }
 
         .player-card {
             background: white;
-            padding: 20px 30px;
-            border-radius: 25px;
+            padding: 15px 35px;
+            border-radius: 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            border: 4px solid #eee;
         }
 
-        .player-info { display: flex; align-items: center; gap: 20px; }
-        .player-name { font-size: 2.2rem; font-weight: 600; color: #2f3542; }
-        .player-score { font-size: 3rem; font-weight: 600; color: var(--ui-blue); margin: 0 25px; min-width: 60px; text-align: center; }
-        .absent { color: #bdc3c7 !important; }
+        /* Smaller Names */
+        .player-name { font-size: 1.8rem; font-weight: 700; color: #2f3542; }
+        .player-score { font-size: 2.8rem; font-weight: 700; color: var(--blue); margin: 0 25px; }
+        .absent { color: #ccc !important; text-decoration: line-through; }
 
-        /* Toggle Button (Check/Ex) */
-        .toggle-btn {
-            font-size: 2rem;
-            border: none;
-            background: #f1f2f6;
-            border-radius: 15px;
-            width: 60px;
-            height: 60px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Music Toggle */
-        #music-control {
+        #music-btn {
             position: absolute;
-            top: 30px;
-            right: 30px;
-            z-index: 100;
+            top: 25px;
+            right: 25px;
+            z-index: 1000;
             background: white;
-            padding: 15px;
-            border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            cursor: pointer;
-            font-size: 2.5rem;
             width: 70px;
             height: 70px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 2.2rem;
+            cursor: pointer;
+            border: 4px solid #eee;
         }
     </style>
 </head>
-<body>
+<body onclick="startMusicOnce()">
 
-    <div id="music-control" onclick="toggleMusic()">🎵</div>
+    <div id="music-btn" onclick="toggleMusic(event)">🎵</div>
     <audio id="bg-music" loop>
         <source src="game_bg.mp3" type="audio/mpeg">
     </audio>
@@ -177,12 +161,12 @@
     </div>
 
     <div id="instruction-1" class="screen">
-        <div class="content-box">
-            <p>Sit in a circle. <span class="sub-text">👉 坐成一圈</span></p>
-            <p>Each student gets a role. <span class="sub-text">👉 每位學生都有一個角色</span></p>
-            <p>1 doctor, 1 sick person <span class="sub-text">👉 一位醫生，一位病人</span></p>
-            <p>The doctor finds who is sick. <span class="sub-text">👉 醫生要找出生病的人</span></p>
-            <p>The doctor has three chances to guess. <span class="sub-text">👉 醫生有三次機會猜</span></p>
+        <div class="content-box text-center">
+            <span class="instruction-line">Sit in a circle.</span>
+            <span class="instruction-line">Each student gets a role.</span>
+            <span class="instruction-line">There is one doctor and one sick person.</span>
+            <span class="instruction-line">The doctor tries to find who is sick.</span>
+            <span class="instruction-line">The doctor has three chances to guess.</span>
         </div>
         <div class="btn-container">
             <button type="button" class="btn btn-red" onclick="showScreen('home-screen')">Home</button>
@@ -191,10 +175,10 @@
     </div>
 
     <div id="instruction-2" class="screen">
-        <div class="content-box">
-            <p>Doctor: "Do you have a _____?"</p>
-            <p>Sick: "Yes, I do. I have a ______."</p>
-            <p>Others: "No, I don't."</p>
+        <div class="content-box text-justify">
+            <span class="instruction-line">Doctor: "Do you have a _____?"</span>
+            <span class="instruction-line">Sick: "Yes, I do. I have a ______."</span>
+            <span class="instruction-line">Others: "No, I don't."</span>
         </div>
         <div class="btn-container">
             <button type="button" class="btn btn-yellow" onclick="showScreen('instruction-1')">Back</button>
@@ -203,9 +187,9 @@
     </div>
 
     <div id="instruction-3" class="screen">
-        <div class="content-box">
-            <p>⭐ If the doctor guesses the sick person, the doctor gets 2 points.</p>
-            <p>⭐ If the doctor did not guess, the other students get 1 point each.</p>
+        <div class="content-box text-center">
+            <span class="instruction-line">If the doctor guesses correctly, they get 2 points.</span>
+            <span class="instruction-line">If not, the other players get 1 point each.</span>
         </div>
         <div class="btn-container">
             <button type="button" class="btn btn-yellow" onclick="showScreen('instruction-2')">Back</button>
@@ -214,39 +198,43 @@
     </div>
 
     <div id="scoreboard-screen" class="screen">
-        <div id="player-list" class="scoreboard-grid">
-            </div>
+        <div id="player-list" class="scoreboard-grid"></div>
         <div class="btn-container">
-            <button type="button" class="btn btn-blue" onclick="addPlayerPrompt(event)">Edit Players</button>
+            <button type="button" class="btn btn-blue" onclick="addPlayer(event)">Add Player</button>
             <button type="button" class="btn btn-red" onclick="showScreen('home-screen')">Home</button>
         </div>
     </div>
 
     <script>
-        // State Management
         let players = [
-            { name: "Jadon", score: 0, active: true },
-            { name: "Randy", score: 0, active: true },
-            { name: "Irene", score: 0, active: true },
-            { name: "Charlie", score: 0, active: true },
-            { name: "Jason", score: 0, active: true },
-            { name: "Sophia", score: 0, active: true },
-            { name: "James", score: 0, active: true },
-            { name: "Athena", score: 0, active: true },
-            { name: "Linda", score: 0, active: true },
-            { name: "Henry", score: 0, active: true }
+            { name: "Jadon", score: 0, active: true }, { name: "Randy", score: 0, active: true },
+            { name: "Irene", score: 0, active: true }, { name: "Charlie", score: 0, active: true },
+            { name: "Jason", score: 0, active: true }, { name: "Sophia", score: 0, active: true },
+            { name: "James", score: 0, active: true }, { name: "Athena", score: 0, active: true },
+            { name: "Linda", score: 0, active: true }, { name: "Henry", score: 0, active: true }
         ];
 
         let musicPlaying = false;
+        let musicStarted = false;
         const bgMusic = document.getElementById('bg-music');
 
-        function toggleMusic() {
+        function startMusicOnce() {
+            if (!musicStarted) {
+                bgMusic.play().then(() => {
+                    musicStarted = true;
+                    musicPlaying = true;
+                }).catch(e => console.log("Waiting for interaction..."));
+            }
+        }
+
+        function toggleMusic(event) {
+            event.stopPropagation(); // Prevents triggering startMusicOnce again
             if (musicPlaying) {
                 bgMusic.pause();
-                document.getElementById('music-control').innerText = "🔇";
+                document.getElementById('music-btn').innerText = "🔇";
             } else {
-                bgMusic.play().catch(e => console.log("Interaction required for audio"));
-                document.getElementById('music-control').innerText = "🎵";
+                bgMusic.play();
+                document.getElementById('music-btn').innerText = "🎵";
             }
             musicPlaying = !musicPlaying;
         }
@@ -260,20 +248,18 @@
         function renderPlayers() {
             const list = document.getElementById('player-list');
             list.innerHTML = '';
-            
-            players.forEach((player, index) => {
+            players.forEach((p, i) => {
                 const card = document.createElement('div');
                 card.className = 'player-card';
-                
                 card.innerHTML = `
-                    <div class="player-info">
-                        <button class="toggle-btn" onclick="togglePlayer(${index})">${player.active ? '✅' : '❌'}</button>
-                        <span class="player-name ${player.active ? '' : 'absent'}">${player.name}</span>
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <button class="btn" style="padding:10px; min-width:55px; font-size:1rem; background:#eee; color:black;" onclick="togglePlayer(${i})">${p.active ? '✅' : '❌'}</button>
+                        <span class="player-name ${p.active ? '' : 'absent'}">${p.name}</span>
                     </div>
-                    <div style="display: ${player.active ? 'flex' : 'none'}; align-items: center;">
-                        <button class="btn btn-red" style="min-width: 60px; padding: 10px; box-shadow: 0 4px 0 #2f3542;" onclick="updateScore(${index}, -1)">➖</button>
-                        <span class="player-score">${player.score}</span>
-                        <button class="btn btn-green" style="min-width: 60px; padding: 10px; box-shadow: 0 4px 0 #2f3542;" onclick="updateScore(${index}, 1)">➕</button>
+                    <div style="display:${p.active ? 'flex' : 'none'}; align-items:center; gap:10px;">
+                        <button class="btn btn-red" style="padding:8px; min-width:50px; font-size:1.5rem;" onclick="updateScore(${i}, -1)">-</button>
+                        <span class="player-score">${p.score}</span>
+                        <button class="btn btn-green" style="padding:8px; min-width:50px; font-size:1.5rem;" onclick="updateScore(${i}, 1)">+</button>
                     </div>
                 `;
                 list.appendChild(card);
@@ -285,24 +271,17 @@
             renderPlayers();
         }
 
-        function updateScore(index, change) {
-            players[index].score += change;
+        function updateScore(index, val) {
+            players[index].score += val;
             if (players[index].score < 0) players[index].score = 0;
             renderPlayers();
         }
 
-        // UPDATED FUNCTION: Prevents full-screen refresh
-        function addPlayerPrompt(event) {
-            if (event) event.preventDefault(); // Stop page from resetting
-            
-            const name = prompt("Enter new student name:");
-            
-            if (name && name.trim() !== "") {
-                players.push({ 
-                    name: name.trim(), 
-                    score: 0, 
-                    active: true 
-                });
+        function addPlayer(event) {
+            event.preventDefault();
+            const name = prompt("Student Name:");
+            if (name) {
+                players.push({ name: name, score: 0, active: true });
                 renderPlayers();
             }
         }
