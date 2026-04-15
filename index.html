@@ -8,108 +8,62 @@
     <style>
         :root {
             --blue: #4CC9FE; --green: #6BCB77; --orange: #FF9F43; --purple: #A29BFE;
-            --gloss: rgba(255, 255, 255, 0.5);
-            --depth: 12px;
+            --gloss: rgba(255, 255, 255, 0.5); --depth: 10px;
         }
 
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            user-select: none; 
-        }
-
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            font-family: 'Fredoka', sans-serif; overflow: hidden; 
-            background-color: #000; 
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Fredoka', sans-serif; overflow: hidden; background-color: #000; }
         
-        #hub-container {
-            position: relative; width: 100vw; height: 100vh;
-            background: url('master_home_page.png') no-repeat center center;
-            background-size: cover;
-        }
-
-        /* --- 3D NEUMORPHIC SCOREBOARD STYLE --- */
-        .scoreboard {
-            background: #f0f0f0;
-            border-radius: 40px;
-            padding: 15px 30px;
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: inset 6px 6px 12px #bebebe, inset -6px -6px 12px #ffffff;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #333;
-            border: 4px solid white;
-        }
-
-        #activity-zone {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: none; background: white; z-index: 10;
-        }
-
+        #hub-container { position: relative; width: 100vw; height: 100vh; background: url('master_home_page.png') no-repeat center center; background-size: cover; }
+        #activity-zone { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; background: white; z-index: 10; }
         iframe { width: 100%; height: 100%; border: none; display: block; }
 
-        .nav-menu {
-            position: absolute; right: 4%; top: 45%; bottom: 5%; width: 42%;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 25px; z-index: 5;
-        }
-
-        /* --- SQUISHY BOUNCY BUTTONS --- */
+        /* --- MENU --- */
+        .nav-menu { position: absolute; right: 4%; top: 45%; bottom: 5%; width: 42%; display: grid; grid-template-columns: 1fr 1fr; gap: 25px; z-index: 5; }
         .btn-3d {
-            border: none;
-            border-radius: 50px; /* Rounded 30-50px */
-            color: white;
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 700; /* Bolder */
-            font-size: 1.6rem; /* Bigger/Readable */
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            position: relative;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
-            
-            /* Smooth Bounce Transition */
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none; border-radius: 50px; color: white; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            text-align: center; padding: 20px; position: relative; text-shadow: 2px 2px 0px rgba(0,0,0,0.2); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        /* Glossy Highlight */
-        .btn-3d::after {
-            content: ''; position: absolute; top: 6px; left: 15px; right: 15px; height: 30%;
-            background: var(--gloss); border-radius: 40px 40px 10px 10px;
-            pointer-events: none;
-        }
-
-        /* Color Variations with Shadows */
-        .btn-blue   { background: var(--blue);   box-shadow: 0 var(--depth) 0 #2a9ccb, 0 15px 25px rgba(0,0,0,0.3); }
-        .btn-green  { background: var(--green);  box-shadow: 0 var(--depth) 0 #4a9e55, 0 15px 25px rgba(0,0,0,0.3); }
+        .btn-3d::after { content: ''; position: absolute; top: 6px; left: 15px; right: 15px; height: 30%; background: var(--gloss); border-radius: 40px; pointer-events: none; }
+        .btn-blue { background: var(--blue); box-shadow: 0 var(--depth) 0 #2a9ccb, 0 15px 25px rgba(0,0,0,0.3); }
+        .btn-green { background: var(--green); box-shadow: 0 var(--depth) 0 #4a9e55, 0 15px 25px rgba(0,0,0,0.3); }
         .btn-orange { background: var(--orange); box-shadow: 0 var(--depth) 0 #cc7f35, 0 15px 25px rgba(0,0,0,0.3); }
         .btn-purple { background: var(--purple); box-shadow: 0 var(--depth) 0 #7b75cb, 0 15px 25px rgba(0,0,0,0.3); }
-
-        /* Squishy Interaction */
-        .btn-3d:active {
-            transform: translateY(8px) scale(0.95); /* Squish down and shrink slightly */
-            box-shadow: 0 4px 0 rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.2);
-        }
-
+        .btn-3d:active { transform: translateY(8px) scale(0.95); box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
         .span-2 { grid-column: span 2; }
 
-        /* Controls */
-        .control-bar { position: absolute; top: 25px; left: 25px; display: flex; gap: 20px; z-index: 100; }
+        /* --- CONTROLS --- */
+        .control-bar { position: absolute; top: 25px; left: 25px; display: flex; gap: 15px; z-index: 100; }
         .circle-btn {
-            width: 75px; height: 75px; background: white; border: 6px solid var(--blue);
-            border-radius: 50%; cursor: pointer; font-size: 2rem;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 70px; height: 70px; background: white; border: 5px solid var(--blue); border-radius: 50%; cursor: pointer; font-size: 1.8rem; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .circle-btn:active { transform: scale(0.8); }
         #home-btn { display: none; border-color: var(--orange); }
+
+        /* --- FLOATING WINDOWS --- */
+        .floating-window {
+            position: absolute; background: #fff; border: 6px solid var(--blue); border-radius: 35px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); z-index: 1000;
+            display: none; padding: 20px; text-align: center; cursor: move; touch-action: none;
+        }
+        .close-btn {
+            position: absolute; top: -15px; right: -15px; width: 40px; height: 40px; background: #ff4757; color: white; border-radius: 50%; border: 4px solid white;
+            font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .mini-btn {
+            background: var(--blue); color: white; border: none; border-radius: 15px; padding: 10px; font-weight: 700; font-family: 'Fredoka'; cursor: pointer;
+            box-shadow: 0 4px 0 #2a9ccb; transition: active 0.1s; font-size: 0.9rem; margin: 4px;
+        }
+        .mini-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a9ccb; }
+
+        /* WINDOW SPECIFIC */
+        #floating-timer { top: 120px; left: 25px; width: 280px; }
+        #floating-whiteboard { top: 120px; left: 320px; width: 400px; }
+        #floating-picker { top: 120px; left: 740px; width: 280px; border-color: var(--orange); }
+        
+        #wb-canvas { background: #f9f9f9; border: 2px solid #ddd; border-radius: 20px; cursor: crosshair; touch-action: none; }
+        #time-val { font-size: 3.5rem; font-weight: 700; margin: 5px 0; color: #333; }
+        #picked-name { font-size: 2.5rem; font-weight: 700; color: var(--orange); margin: 15px 0; min-height: 60px; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -118,6 +72,39 @@
         <div class="control-bar">
             <button class="circle-btn" onclick="toggleFS()">⛶</button>
             <button class="circle-btn" id="home-btn" onclick="backToHub()">🏠</button>
+            <button class="circle-btn" onclick="toggleWin('floating-timer')" style="border-color: var(--green);">⏱</button>
+            <button class="circle-btn" onclick="toggleWin('floating-whiteboard')" style="border-color: var(--purple);">✏️</button>
+            <button class="circle-btn" onclick="toggleWin('floating-picker')" style="border-color: var(--orange);">👤</button>
+        </div>
+
+        <div id="floating-timer" class="floating-window">
+            <button class="close-btn" onclick="toggleWin('floating-timer')">X</button>
+            <div style="font-size: 0.7rem; color: #999;">TIMER</div>
+            <div id="time-val">00:00</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px;">
+                <button class="mini-btn" onclick="adjTimer(60)">+ MIN</button>
+                <button class="mini-btn" onclick="adjTimer(-60)">- MIN</button>
+                <button class="mini-btn" onclick="adjTimer(10)">+ SEC</button>
+                <button class="mini-btn" onclick="adjTimer(-10)">- SEC</button>
+            </div>
+            <button class="mini-btn" id="start-btn" onclick="startTimer()" style="background:var(--green); box-shadow:0 4px 0 #4a9e55; width: 45%;">START</button>
+            <button class="mini-btn" onclick="resetTimer()" style="background:var(--orange); box-shadow:0 4px 0 #cc7f35; width: 45%;">RESET</button>
+        </div>
+
+        <div id="floating-whiteboard" class="floating-window">
+            <button class="close-btn" onclick="toggleWin('floating-whiteboard')">X</button>
+            <div style="font-size: 0.7rem; color: #999;">WHITEBOARD</div>
+            <canvas id="wb-canvas" width="350" height="250"></canvas>
+            <button class="mini-btn" onclick="setWBTool('pen')">PEN</button>
+            <button class="mini-btn" onclick="setWBTool('eraser')">ERASER</button>
+            <button class="mini-btn" onclick="clearWB()" style="background:#ff4757;">CLEAR</button>
+        </div>
+
+        <div id="floating-picker" class="floating-window">
+            <button class="close-btn" onclick="toggleWin('floating-picker')">X</button>
+            <div style="font-size: 0.7rem; color: #999;">NAME PICKER</div>
+            <div id="picked-name">???</div>
+            <button class="mini-btn" onclick="pickName()" style="background:var(--orange); box-shadow:0 4px 0 #cc7f35; width: 90%; font-size: 1.1rem;">PICK A STUDENT!</button>
         </div>
 
         <div class="nav-menu" id="nav-grid">
@@ -128,46 +115,66 @@
             <button class="btn-3d btn-blue span-2" onclick="openGame('quick_check/QuickCheck.html')">QUICK CHECK</button>
         </div>
 
-        <div id="activity-zone">
-            <iframe id="app-frame" name="app-frame" allowfullscreen></iframe>
-        </div>
+        <div id="activity-zone"><iframe id="app-frame" name="app-frame" allowfullscreen></iframe></div>
     </div>
 
     <script>
-        const navGrid = document.getElementById('nav-grid');
-        const activityZone = document.getElementById('activity-zone');
-        const frame = document.getElementById('app-frame');
-        const homeBtn = document.getElementById('home-btn');
+        const navGrid = document.getElementById('nav-grid'), activityZone = document.getElementById('activity-zone'), frame = document.getElementById('app-frame'), homeBtn = document.getElementById('home-btn');
 
-        function openGame(url) {
-            if (url === 'canva') {
-                frame.src = "https://www.canva.com/design/DAHGbjNDFRw/16X8HHTZhbsaW1s5Q65vgw/view?embed";
-            } else {
-                frame.src = url;
-            }
-            navGrid.style.display = 'none';
-            activityZone.style.display = 'block';
-            homeBtn.style.display = 'flex';
+        function openGame(url) { if (url === 'canva') frame.src = "https://www.canva.com/design/DAHGbjNDFRw/16X8HHTZhbsaW1s5Q65vgw/view?embed"; else frame.src = url; navGrid.style.display = 'none'; activityZone.style.display = 'block'; homeBtn.style.display = 'flex'; }
+        function backToHub() { frame.src = "about:blank"; navGrid.style.display = 'grid'; activityZone.style.display = 'none'; homeBtn.style.display = 'none'; }
+        function toggleFS() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+        function toggleWin(id) { const el = document.getElementById(id); el.style.display = (el.style.display === 'block') ? 'none' : 'block'; }
+
+        // DRAGGABLE LOGIC
+        function makeDraggable(el) {
+            let isDragging = false, offset = { x: 0, y: 0 };
+            const start = (e) => { if (e.target.tagName === 'BUTTON' || e.target.tagName === 'CANVAS') return; isDragging = true; let cX = e.clientX || e.touches[0].clientX, cY = e.clientY || e.touches[0].clientY; offset.x = cX - el.offsetLeft; offset.y = cY - el.offsetTop; };
+            const move = (e) => { if (!isDragging) return; let cX = e.clientX || (e.touches ? e.touches[0].clientX : null), cY = e.clientY || (e.touches ? e.touches[0].clientY : null); el.style.left = (cX - offset.x) + 'px'; el.style.top = (cY - offset.y) + 'px'; };
+            el.addEventListener('mousedown', start); el.addEventListener('touchstart', start); document.addEventListener('mousemove', move); document.addEventListener('touchmove', move); document.addEventListener('mouseup', () => isDragging = false); document.addEventListener('touchend', () => isDragging = false);
         }
+        document.querySelectorAll('.floating-window').forEach(makeDraggable);
 
-        function backToHub() {
-            frame.src = "about:blank";
-            navGrid.style.display = 'grid';
-            activityZone.style.display = 'none';
-            homeBtn.style.display = 'none';
+        // TIMER LOGIC
+        let timerSeconds = 0, timerInterval = null;
+        function adjTimer(v) { 
+            timerSeconds = Math.max(0, timerSeconds + v); 
+            let m = Math.floor(timerSeconds/60), s = timerSeconds%60; 
+            document.getElementById('time-val').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; 
         }
-
-        function toggleFS() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {});
-            } else {
-                document.exitFullscreen();
-            }
+        function startTimer() { 
+            const b = document.getElementById('start-btn'); 
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; b.innerText = "START"; } 
+            else { 
+                if (timerSeconds <= 0) return;
+                timerInterval = setInterval(() => { 
+                    if (timerSeconds <= 0) { clearInterval(timerInterval); timerInterval = null; b.innerText = "START"; alert("Time's up!"); return; } 
+                    timerSeconds--; adjTimer(0); 
+                }, 1000); b.innerText = "PAUSE"; 
+            } 
         }
+        function resetTimer() { clearInterval(timerInterval); timerInterval = null; timerSeconds = 0; adjTimer(0); document.getElementById('start-btn').innerText = "START"; }
 
-        window.addEventListener('submit', function(e) {
-            e.preventDefault();
-        }, true);
+        // WHITEBOARD LOGIC
+        const canvas = document.getElementById('wb-canvas'), ctx = canvas.getContext('2d');
+        let drawing = false, tool = 'pen';
+        function setWBTool(t) { tool = t; }
+        function clearWB() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+        const draw = (e) => { if (!drawing) return; const r = canvas.getBoundingClientRect(); let cX = e.clientX || e.touches[0].clientX, cY = e.clientY || e.touches[0].clientY; ctx.lineWidth = tool === 'pen' ? 3 : 20; ctx.lineCap = 'round'; ctx.strokeStyle = tool === 'pen' ? '#333' : '#f9f9f9'; ctx.lineTo(cX - r.left, cY - r.top); ctx.stroke(); ctx.beginPath(); ctx.moveTo(cX - r.left, cY - r.top); };
+        canvas.addEventListener('mousedown', (e) => { drawing = true; draw(e); }); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
+        canvas.addEventListener('touchstart', (e) => { drawing = true; draw(e); }); canvas.addEventListener('touchmove', draw);
+
+        // NAME PICKER LOGIC
+        const students = ["Jadon", "Irene", "Jason", "James", "Linda", "Henry", "Athena", "Sophia", "Charlie", "Randy"];
+        function pickName() {
+            const display = document.getElementById('picked-name');
+            let count = 0;
+            const shuffle = setInterval(() => {
+                display.innerText = students[Math.floor(Math.random() * students.length)];
+                count++;
+                if (count > 10) { clearInterval(shuffle); display.innerText = students[Math.floor(Math.random() * students.length)]; }
+            }, 100);
+        }
     </script>
 </body>
 </html>

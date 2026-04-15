@@ -39,7 +39,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.1s;
         }
 
-        /* 🎨 SQUISHY NEUMORPHIC 3D BUTTON STYLE */
         .btn-3d { 
             position: relative;
             padding: 20px 45px;
@@ -74,65 +73,36 @@
         .btn-red { background: var(--danger); }
 
         .home-controls { 
-            position: absolute; 
-            bottom: 80px; 
-            left: -30px; 
-            width: 100%; 
-            display: flex; 
-            justify-content: center; 
-            gap: 35px; 
+            position: absolute; bottom: 80px; left: -30px; width: 100%; display: flex; justify-content: center; gap: 35px; 
         }
 
-        .game-container { display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; }
-        
-        #scoreboard { 
-            position: absolute; 
-            left: 80px; 
-            top: 45%; 
-            transform: translateY(-50%);
-            display: flex; 
-            flex-direction: column; 
-            gap: 8px;
-            width: 190px;
-            z-index: 10;
+        /* SCOREBOARD & SKIP BUTTON */
+        #scoreboard-container {
+            position: absolute; left: 80px; top: 45%; transform: translateY(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 10;
         }
+        #scoreboard { display: flex; flex-direction: column; gap: 8px; width: 190px; }
         .player-card { 
-            background: rgba(255,255,255,0.95); 
-            padding: 8px 14px;
-            border-radius: 12px; 
-            border: 3px solid #333; 
-            font-size: 17px;
-            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.95); padding: 8px 14px; border-radius: 12px; border: 3px solid #333; 
+            font-size: 17px; box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
         }
 
         .pill-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 40px; margin-left: 220px; }
-        
-        .pill-item { 
-            width: 130px; 
-            height: 120px; 
-            cursor: pointer; 
-            transition: transform 0.2s;
-        }
+        .pill-item { width: 130px; height: 120px; cursor: pointer; transition: transform 0.2s; }
         .pill-item img { width: 100%; height: 100%; object-fit: fill; }
         
+        /* MODAL & DRAG/DROP STYLES */
         #player-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-height: 85%; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 0 50px rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto; }
-        .player-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; font-size: 24px; }
         
-        /* 📜 HOW TO PLAY STYLING (CENTERED, LARGE, SPACED) */
-        .how-list { 
-            list-style: none; 
-            padding: 0; 
-            margin: 40px 0; 
-            font-size: 38px; /* Extra large for distance */
-            line-height: 2.2; /* Lots of space between lines */
-            text-align: center; /* Centered text */
-            font-weight: bold;
+        .player-row { 
+            display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 2px solid #eee; margin-bottom: 5px; 
+            border-radius: 10px; background: #fff; cursor: grab; font-size: 24px;
         }
-        .how-list li {
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
+        .player-row.dragging { opacity: 0.5; background: #f0f0f0; cursor: grabbing; }
+        .inactive-player { background: #f9f9f9; color: #bbb; }
 
+        .how-list { list-style: none; padding: 0; margin: 40px 0; font-size: 38px; line-height: 2.2; text-align: center; font-weight: bold; }
+        .how-list li { margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         .modal-footer { display: flex; gap: 15px; margin-top: 20px; justify-content: center; position: sticky; bottom: 0; background: white; padding-top: 10px; }
     </style>
 </head>
@@ -155,7 +125,10 @@
 
     <section id="game-page" class="page">
         <div class="game-container">
-            <div id="scoreboard"></div>
+            <div id="scoreboard-container">
+                <div id="scoreboard"></div>
+                <button class="btn-3d btn-red" style="padding: 10px 30px; font-size: 18px;" onclick="skipTurn()">SKIP ⏭️</button>
+            </div>
             <div class="pill-grid" id="pill-grid"></div>
         </div>
     </section>
@@ -194,6 +167,7 @@
 
     <div id="player-modal">
         <h2 style="text-align:center">Student Roster</h2>
+        <p style="text-align:center; font-size: 14px; color: #666;">Drag rows to reorder turn list</p>
         <div id="player-list-container"></div>
         <div class="modal-footer">
             <button class="btn-3d btn-blue" style="font-size: 18px; padding: 12px 25px;" onclick="addNewPlayer()">+ Add Player</button>
@@ -245,13 +219,8 @@
         const bgMusic = document.getElementById('game-bg-music');
 
         function initMusic() {
-            bgMusic.play().then(() => {
-                isMusicOn = true;
-                document.getElementById('music-control').innerText = "🔊";
-            }).catch(() => {
-                isMusicOn = false;
-                document.getElementById('music-control').innerText = "🔇";
-            });
+            bgMusic.play().then(() => { isMusicOn = true; document.getElementById('music-control').innerText = "🔊"; })
+            .catch(() => { isMusicOn = false; document.getElementById('music-control').innerText = "🔇"; });
         }
 
         function toggleMusic() {
@@ -262,17 +231,64 @@
 
         function toggleModal(id, show) { document.getElementById(id).style.display = show ? (id==='how-to-modal'?'flex':'block') : 'none'; }
 
+        /* DRAG AND DROP LOGIC */
         function renderPlayerList() {
             const container = document.getElementById('player-list-container');
-            container.innerHTML = players.map((p, i) => `
-                <div class="player-row ${p.active ? '' : 'inactive-player'}">
-                    <span>${p.name}</span>
+            container.innerHTML = '';
+            players.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = `player-row ${p.active ? '' : 'inactive-player'}`;
+                div.draggable = true;
+                div.dataset.index = i;
+                div.innerHTML = `
+                    <span>☰ ${p.name}</span>
                     <div>
-                        <button class="btn-3d btn-green" style="padding:5px 15px; font-size:14px; border-radius:10px;" onclick="setPlayerStatus(${i}, true)">✔</button>
-                        <button class="btn-3d btn-red" style="padding:5px 15px; font-size:14px; border-radius:10px;" onclick="setPlayerStatus(${i}, false)">✖</button>
+                        <button class="btn-3d btn-green" style="padding:5px 15px; font-size:14px; border-radius:10px;" onclick="event.stopPropagation(); setPlayerStatus(${i}, true)">✔</button>
+                        <button class="btn-3d btn-red" style="padding:5px 15px; font-size:14px; border-radius:10px;" onclick="event.stopPropagation(); setPlayerStatus(${i}, false)">✖</button>
                     </div>
-                </div>
-            `).join('');
+                `;
+                
+                div.addEventListener('dragstart', () => div.classList.add('dragging'));
+                div.addEventListener('dragend', () => {
+                    div.classList.remove('dragging');
+                    reorderPlayers();
+                });
+                container.appendChild(div);
+            });
+
+            container.addEventListener('dragover', e => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(container, e.clientY);
+                const dragging = document.querySelector('.dragging');
+                if (afterElement == null) {
+                    container.appendChild(dragging);
+                } else {
+                    container.insertBefore(dragging, afterElement);
+                }
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.player-row:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function reorderPlayers() {
+            const newOrder = [];
+            document.querySelectorAll('.player-row').forEach(row => {
+                const index = row.dataset.index;
+                newOrder.push(players[index]);
+            });
+            players = newOrder;
+            renderPlayerList();
         }
 
         function addNewPlayer() {
@@ -286,9 +302,10 @@
         function setPlayerStatus(i, status) { players[i].active = status; renderPlayerList(); }
 
         function startGame() {
-            if(!isMusicOn) { bgMusic.play().catch(()=>{}); isMusicOn = true; document.getElementById('music-control').innerText = "🔊"; }
+            if(!isMusicOn) { bgMusic.play().catch(()=>{}); isMusicOn = true; }
             vocabulary = [...baseVocab, baseVocab[0], baseVocab[1]].sort(() => 0.5 - Math.random());
             pillsLeft = 20;
+            currentPlayerIdx = 0;
             showPage('game-page');
             updateScoreboard();
             renderGrid();
@@ -320,6 +337,15 @@
                 document.getElementById('timer-display').innerText = left;
                 if(left <= 0) { clearInterval(timer); submitAnswer(false); }
             }, 1000);
+        }
+
+        function skipTurn() {
+            // Give 0 points and move to next player
+            const activeList = players.filter(p => p.active);
+            if(activeList.length === 0) return;
+            
+            currentPlayerIdx = (currentPlayerIdx + 1) % activeList.length;
+            updateScoreboard();
         }
 
         function submitAnswer(isCorrect) {
