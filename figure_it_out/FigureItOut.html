@@ -28,7 +28,8 @@
             flex-direction: column; align-items: center; justify-content: center;
         }
 
-        .active { display: flex; animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* Essential for navigation */
+        .page.active { display: flex; animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
         @keyframes pop {
             0% { transform: scale(0.8); opacity: 0; }
@@ -41,45 +42,34 @@
         #answer-page { background-image: url('answer_page.png'); }
         #result-page { background-image: url('final_result.png'); }
 
-        /* 3D NEUMORPHIC GLOSSY STYLE (NO OUTER SHADOW) */
+        /* 3D NEUMORPHIC GLOSSY STYLE */
         .btn {
             padding: 22px 45px; font-size: 2.2rem; font-weight: 600;
             color: white; border: none; cursor: pointer; margin: 15px;
-            border-radius: 40px; /* 30-50px radius */
-            position: relative; overflow: hidden;
+            border-radius: 40px; position: relative; overflow: hidden;
             background: var(--primary);
-            /* Inset shadows create 3D depth without external shadow */
-            box-shadow: inset 6px 6px 12px rgba(255,255,255,0.4), 
-                        inset -6px -6px 12px rgba(0,0,0,0.2);
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bounce release */
+            box-shadow: inset 6px 6px 12px rgba(255,255,255,0.4), inset -6px -6px 12px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        /* Glossy Highlight Overlay */
         .btn::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%;
             background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
             pointer-events: none;
         }
 
-        .btn:active {
-            transform: scale(0.88); /* Squishy effect */
-            filter: brightness(0.9);
-        }
-
+        .btn:active { transform: scale(0.88); filter: brightness(0.9); }
         .btn-green { background-color: var(--secondary); }
         .btn-blue { background-color: var(--accent); }
 
-        /* INSTRUCTION BOX - CENTERED & LARGE */
         .instruction-box {
             background: rgba(255, 255, 255, 0.9); padding: 50px 70px; border-radius: 40px;
             text-align: center; font-size: 2.5rem; line-height: 2.2; max-width: 85%;
             box-shadow: inset 4px 4px 10px rgba(0,0,0,0.05);
         }
 
-        /* SCOREBOARD */
         .scoreboard-container {
-            position: absolute; top: 10%;
-            display: flex; gap: 50px; background: #f0f3f7;
+            position: absolute; top: 10%; display: flex; gap: 50px; background: #f0f3f7;
             padding: 25px 50px; border-radius: 50px;
             box-shadow: inset 8px 8px 16px rgba(0,0,0,0.1), inset -8px -8px 16px rgba(255,255,255,0.8);
         }
@@ -87,7 +77,6 @@
         .score-box { text-align: center; min-width: 170px; }
         .score-num { font-size: 5rem; font-weight: bold; color: var(--primary); }
 
-        /* NUMBER ICONS */
         .number-container { display: flex; gap: 30px; margin-top: 80px; }
         .num-box {
             width: 160px; height: 160px; border-radius: 40px;
@@ -100,7 +89,6 @@
         .num-box:active { transform: scale(0.85); }
         .num-box.used { opacity: 0.2; pointer-events: none; filter: grayscale(1); }
 
-        /* LOWERED NAVIGATION */
         .game-nav { position: absolute; bottom: 15px; display: flex; gap: 30px; } 
 
         #music-btn {
@@ -111,15 +99,17 @@
         }
 
         .display-img { max-height: 42vh; border: 12px solid white; border-radius: 30px; }
-        .answer-text { font-size: 3.5rem; background: white; padding: 25px 45px; border-radius: 30px; margin-top: 40px; }
+        .answer-text { font-size: 3.5rem; background: white; padding: 25px 45px; border-radius: 30px; margin-top: 40px; text-align: center; }
+
+        /* FINAL RESULT ALIGNMENT */
+        .final-score-row { display: flex; justify-content: center; align-items: center; gap: 150px; margin: 40px 0; width: 100%; }
+        .final-group-unit { display: flex; flex-direction: column; align-items: center; }
+        .final-val { font-size: 9rem; font-weight: bold; color: var(--primary); margin: 0; }
     </style>
 </head>
 <body onclick="initAudio()">
 
-    <audio id="bgMusic" loop preload="auto">
-        <source src="game_bg.mp3" type="audio/mpeg">
-    </audio>
-
+    <audio id="bgMusic" loop preload="auto"><source src="game_bg.mp3" type="audio/mpeg"></audio>
     <button id="music-btn" onclick="toggleMusic(event)">🎵</button>
 
     <div id="home-page" class="page active">
@@ -144,19 +134,18 @@
     <div id="game-page" class="page">
         <div class="scoreboard-container">
             <div class="score-box">
-                <div style="font-size: 1.5rem; font-weight: 600;">Group A</div>
+                <div class="gn-A" style="font-size: 1.5rem; font-weight: 600;">Group A</div>
                 <div id="scoreA" class="score-num">0</div>
                 <button class="btn btn-green" style="padding: 8px 20px; font-size: 1.2rem;" onclick="changeScore('A', 1)">➕</button>
                 <button class="btn" style="padding: 8px 20px; font-size: 1.2rem;" onclick="changeScore('A', -1)">➖</button>
             </div>
             <div class="score-box">
-                <div style="font-size: 1.5rem; font-weight: 600;">Group B</div>
+                <div class="gn-B" style="font-size: 1.5rem; font-weight: 600;">Group B</div>
                 <div id="scoreB" class="score-num">0</div>
                 <button class="btn btn-green" style="padding: 8px 20px; font-size: 1.2rem;" onclick="changeScore('B', 1)">➕</button>
                 <button class="btn" style="padding: 8px 20px; font-size: 1.2rem;" onclick="changeScore('B', -1)">➖</button>
             </div>
         </div>
-
         <div class="number-container">
             <div class="num-box" id="box1" style="background:#f44336" onclick="startQ(0)">1</div>
             <div class="num-box" id="box2" style="background:#2196F3" onclick="startQ(1)">2</div>
@@ -164,7 +153,6 @@
             <div class="num-box" id="box4" style="background:#FF9800" onclick="startQ(3)">4</div>
             <div class="num-box" id="box5" style="background:#9C27B0" onclick="startQ(4)">5</div>
         </div>
-
         <div class="game-nav">
             <button class="btn btn-blue" onclick="showPage('home-page')">Back to Home</button>
             <button class="btn btn-green" onclick="showResults()">Final Results</button>
@@ -181,9 +169,40 @@
         <img id="a-img" src="" class="display-img">
         <div id="a-text" class="answer-text" style="color:var(--secondary); font-weight:bold;"></div>
         <div style="display:flex; gap:30px; margin-top: 20px;">
-            <button class="btn btn-blue" onclick="award('A')">Group A</button>
-            <button class="btn btn-blue" onclick="award('B')">Group B</button>
+            <button class="btn btn-blue awardA" onclick="award('A')">Group A Wins</button>
+            <button class="btn btn-blue awardB" onclick="award('B')">Group B Wins</button>
         </div>
+    </div>
+
+    <div id="result-page" class="page">
+        <div class="instruction-box">
+            <h1 style="margin: 0; font-size: 3.5rem; color: var(--accent);">CONGRATULATIONS!</h1>
+            <div class="final-score-row">
+                <div class="final-group-unit">
+                    <div class="gn-A" style="font-size: 2.2rem; font-weight:600;">GROUP A</div>
+                    <div id="finalA" class="final-val">0</div>
+                </div>
+                <div class="final-group-unit">
+                    <div class="gn-B" style="font-size: 2.2rem; font-weight:600;">GROUP B</div>
+                    <div id="finalB" class="final-val">0</div>
+                </div>
+            </div>
+            <button class="btn btn-green" onclick="location.reload()">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <div id="groups-page" class="page">
+        <div style="display: flex; gap: 40px;">
+            <div class="instruction-box" style="min-width: 400px;">
+                <h2 id="disp-nameA" style="color:var(--accent); margin:0">GROUP A</h2>
+                <div id="disp-membersA" style="font-size: 1.8rem;">Charlie, Randy, Jadon, Irene, Jason</div>
+            </div>
+            <div class="instruction-box" style="min-width: 400px;">
+                <h2 id="disp-nameB" style="color:var(--primary); margin:0">GROUP B</h2>
+                <div id="disp-membersB" style="font-size: 1.8rem;">Sophia, Henry, Athena, James, Linda</div>
+            </div>
+        </div>
+        <button class="btn btn-blue" onclick="showPage('home-page')">Back</button>
     </div>
 
     <script>
@@ -201,21 +220,13 @@
         let audioInitialized = false;
 
         function initAudio() {
-            if (!audioInitialized) {
-                music.play().catch(e => console.log("Audio waiting for interaction"));
-                audioInitialized = true;
-            }
+            if (!audioInitialized) { music.play().catch(e => console.log("Init Audio")); audioInitialized = true; }
         }
 
         function toggleMusic(e) {
             e.stopPropagation();
-            if (music.paused) {
-                music.play();
-                document.getElementById('music-btn').innerText = '🎵';
-            } else {
-                music.pause();
-                document.getElementById('music-btn').innerText = '🔇';
-            }
+            if (music.paused) { music.play(); document.getElementById('music-btn').innerText = '🎵'; }
+            else { music.pause(); document.getElementById('music-btn').innerText = '🔇'; }
         }
 
         function showPage(id) {
@@ -240,21 +251,23 @@
         function award(winner) {
             if(winner === 'A') { scores.A += 2; scores.B += 1; }
             else { scores.B += 2; scores.A += 1; }
-            document.getElementById('scoreA').innerText = scores.A;
-            document.getElementById('scoreB').innerText = scores.B;
+            updateScores();
             showPage('game-page');
         }
 
         function changeScore(g, v) {
             scores[g] = Math.max(0, scores[g] + v);
-            document.getElementById('scoreA').innerText = scores.A;
-            document.getElementById('scoreB').innerText = scores.B;
+            updateScores();
         }
 
-        function showResults() {
-            // Logic to show results page
-            alert(`Final Scores\nGroup A: ${scores.A}\nGroup B: ${scores.B}`);
+        function updateScores() {
+            document.getElementById('scoreA').innerText = scores.A;
+            document.getElementById('scoreB').innerText = scores.B;
+            document.getElementById('finalA').innerText = scores.A;
+            document.getElementById('finalB').innerText = scores.B;
         }
+
+        function showResults() { showPage('result-page'); }
     </script>
 </body>
 </html>
