@@ -76,7 +76,6 @@
             position: absolute; bottom: 80px; left: -30px; width: 100%; display: flex; justify-content: center; gap: 35px; 
         }
 
-        /* SCOREBOARD & SKIP BUTTON */
         #scoreboard-container {
             position: absolute; left: 80px; top: 45%; transform: translateY(-50%);
             display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 10;
@@ -91,18 +90,23 @@
         .pill-item { width: 130px; height: 120px; cursor: pointer; transition: transform 0.2s; }
         .pill-item img { width: 100%; height: 100%; object-fit: fill; }
         
-        /* MODAL & DRAG/DROP STYLES */
-        #player-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-height: 85%; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 0 50px rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto; }
-        
-        .player-row { 
-            display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 2px solid #eee; margin-bottom: 5px; 
-            border-radius: 10px; background: #fff; cursor: grab; font-size: 24px;
+        .how-list { 
+            list-style: none; 
+            padding: 0; 
+            margin: 40px 0; 
+            font-size: 38px; 
+            line-height: 2.2; 
+            text-align: center; 
+            font-weight: bold; 
         }
-        .player-row.dragging { opacity: 0.5; background: #f0f0f0; cursor: grabbing; }
-        .inactive-player { background: #f9f9f9; color: #bbb; }
+        .how-list li {
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
 
-        .how-list { list-style: none; padding: 0; margin: 40px 0; font-size: 38px; line-height: 2.2; text-align: center; font-weight: bold; }
-        .how-list li { margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        #player-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-height: 85%; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 0 50px rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto; }
+        .player-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 2px solid #eee; margin-bottom: 5px; border-radius: 10px; background: #fff; cursor: grab; font-size: 24px; }
+        .player-row.dragging { opacity: 0.5; background: #f0f0f0; }
         .modal-footer { display: flex; gap: 15px; margin-top: 20px; justify-content: center; position: sticky; bottom: 0; background: white; padding-top: 10px; }
     </style>
 </head>
@@ -134,7 +138,6 @@
     </section>
 
     <section id="question-page" class="page">
-        <div id="timer-display" style="position: absolute; top: 20px; font-size: 50px; color: var(--danger); background: white; padding: 5px 20px; border-radius: 25px; border: 4px solid var(--danger);">10</div>
         <img id="guess-image" style="max-height: 400px; width: auto; margin-bottom: 30px; border: 10px solid white; border-radius: 30px;" src="">
         <div style="display:flex; gap:35px">
             <button class="btn-3d btn-green" onclick="submitAnswer(true)">CORRECT</button>
@@ -167,7 +170,6 @@
 
     <div id="player-modal">
         <h2 style="text-align:center">Student Roster</h2>
-        <p style="text-align:center; font-size: 14px; color: #666;">Drag rows to reorder turn list</p>
         <div id="player-list-container"></div>
         <div class="modal-footer">
             <button class="btn-3d btn-blue" style="font-size: 18px; padding: 12px 25px;" onclick="addNewPlayer()">+ Add Player</button>
@@ -180,7 +182,7 @@
         <ul class="how-list">
             <li>Choose a pill.</li>
             <li>Look at the picture.</li>
-            <li>Say the word (object or illness).</li>
+            <li>Say the word (body part or illness).</li>
             <li>If correct, you get the points.</li>
             <li>If incorrect, you get no points.</li>
         </ul>
@@ -209,7 +211,6 @@
         ];
 
         let vocabulary = [];
-        let timer;
         let pillsLeft = 20;
         let isMusicOn = false;
         let currentPlayerIdx = 0;
@@ -231,7 +232,6 @@
 
         function toggleModal(id, show) { document.getElementById(id).style.display = show ? (id==='how-to-modal'?'flex':'block') : 'none'; }
 
-        /* DRAG AND DROP LOGIC */
         function renderPlayerList() {
             const container = document.getElementById('player-list-container');
             container.innerHTML = '';
@@ -240,120 +240,69 @@
                 div.className = `player-row ${p.active ? '' : 'inactive-player'}`;
                 div.draggable = true;
                 div.dataset.index = i;
-                div.innerHTML = `
-                    <span>☰ ${p.name}</span>
-                    <div>
-                        <button class="btn-3d btn-green" style="padding:5px 15px; font-size:14px; border-radius:10px;" onclick="event.stopPropagation(); setPlayerStatus(${i}, true)">✔</button>
-                        <button class="btn-3d btn-red" style="padding:5px 15px; font-size:14px; border-radius:10px;" onclick="event.stopPropagation(); setPlayerStatus(${i}, false)">✖</button>
-                    </div>
-                `;
-                
+                div.innerHTML = `<span>☰ ${p.name}</span>
+                    <div><button class="btn-3d btn-green" style="padding:5px 15px; font-size:14px; border-radius:10px;" onclick="event.stopPropagation(); setPlayerStatus(${i}, true)">✔</button>
+                    <button class="btn-3d btn-red" style="padding:5px 15px; font-size:14px; border-radius:10px;" onclick="event.stopPropagation(); setPlayerStatus(${i}, false)">✖</button></div>`;
                 div.addEventListener('dragstart', () => div.classList.add('dragging'));
-                div.addEventListener('dragend', () => {
-                    div.classList.remove('dragging');
-                    reorderPlayers();
-                });
+                div.addEventListener('dragend', () => { div.classList.remove('dragging'); reorderPlayers(); });
                 container.appendChild(div);
             });
-
             container.addEventListener('dragover', e => {
                 e.preventDefault();
-                const afterElement = getDragAfterElement(container, e.clientY);
                 const dragging = document.querySelector('.dragging');
-                if (afterElement == null) {
-                    container.appendChild(dragging);
-                } else {
-                    container.insertBefore(dragging, afterElement);
-                }
+                const afterElement = [...container.querySelectorAll('.player-row:not(.dragging)')].reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = e.clientY - box.top - box.height / 2;
+                    return offset < 0 && offset > closest.offset ? { offset, element: child } : closest;
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+                afterElement == null ? container.appendChild(dragging) : container.insertBefore(dragging, afterElement);
             });
-        }
-
-        function getDragAfterElement(container, y) {
-            const draggableElements = [...container.querySelectorAll('.player-row:not(.dragging)')];
-            return draggableElements.reduce((closest, child) => {
-                const box = child.getBoundingClientRect();
-                const offset = y - box.top - box.height / 2;
-                if (offset < 0 && offset > closest.offset) {
-                    return { offset: offset, element: child };
-                } else {
-                    return closest;
-                }
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
         }
 
         function reorderPlayers() {
             const newOrder = [];
-            document.querySelectorAll('.player-row').forEach(row => {
-                const index = row.dataset.index;
-                newOrder.push(players[index]);
-            });
+            document.querySelectorAll('.player-row').forEach(row => newOrder.push(players[row.dataset.index]));
             players = newOrder;
             renderPlayerList();
         }
 
+        function setPlayerStatus(i, status) { players[i].active = status; renderPlayerList(); }
         function addNewPlayer() {
-            const newName = prompt("Enter new student name:");
-            if (newName && newName.trim() !== "") {
-                players.push({name: newName.trim(), score: 0, active: true});
-                renderPlayerList();
-            }
+            const n = prompt("Enter student name:");
+            if (n) { players.push({name: n.trim(), score: 0, active: true}); renderPlayerList(); }
         }
 
-        function setPlayerStatus(i, status) { players[i].active = status; renderPlayerList(); }
-
         function startGame() {
-            if(!isMusicOn) { bgMusic.play().catch(()=>{}); isMusicOn = true; }
             vocabulary = [...baseVocab, baseVocab[0], baseVocab[1]].sort(() => 0.5 - Math.random());
-            pillsLeft = 20;
-            currentPlayerIdx = 0;
-            showPage('game-page');
-            updateScoreboard();
-            renderGrid();
+            pillsLeft = 20; currentPlayerIdx = 0;
+            showPage('game-page'); updateScoreboard(); renderGrid();
         }
 
         function renderGrid() {
-            const grid = document.getElementById('pill-grid');
-            grid.innerHTML = '';
+            const grid = document.getElementById('pill-grid'); grid.innerHTML = '';
             vocabulary.forEach(item => {
                 const div = document.createElement('div');
-                div.className = 'pill-item';
-                div.innerHTML = `<img src="pill.png" alt="pill">`;
+                div.className = 'pill-item'; div.innerHTML = `<img src="pill.png" alt="pill">`;
                 div.onclick = () => {
                     activeItem = item; activeDiv = div;
                     document.getElementById('guess-image').src = item.i;
                     showPage('question-page');
-                    startTimer();
                 };
                 grid.appendChild(div);
             });
         }
 
-        function startTimer() {
-            let left = 10;
-            document.getElementById('timer-display').innerText = left;
-            clearInterval(timer);
-            timer = setInterval(() => {
-                left--;
-                document.getElementById('timer-display').innerText = left;
-                if(left <= 0) { clearInterval(timer); submitAnswer(false); }
-            }, 1000);
-        }
-
         function skipTurn() {
-            // Give 0 points and move to next player
             const activeList = players.filter(p => p.active);
             if(activeList.length === 0) return;
-            
             currentPlayerIdx = (currentPlayerIdx + 1) % activeList.length;
             updateScoreboard();
         }
 
         function submitAnswer(isCorrect) {
-            clearInterval(timer);
             const activeList = players.filter(p => p.active);
             if(activeList.length === 0) return;
             const curP = activeList[currentPlayerIdx];
-
             if(isCorrect) {
                 const r = Math.random() * 100;
                 let pts = r < 40 ? 1 : r < 70 ? 3 : 5;
@@ -370,32 +319,24 @@
         function nextTurn() {
             if(activeDiv) activeDiv.style.visibility = 'hidden';
             pillsLeft--;
-            if(pillsLeft <= 0) {
-                showFinalResult();
-            } else {
+            if(pillsLeft <= 0) { showFinalResult(); } 
+            else {
                 const count = players.filter(p => p.active).length;
                 currentPlayerIdx = (currentPlayerIdx + 1) % count;
-                updateScoreboard();
-                showPage('game-page');
+                updateScoreboard(); showPage('game-page');
             }
         }
 
         function showFinalResult() {
             showPage('final-result-page');
             const sorted = [...players.filter(p => p.active)].sort((a,b) => b.score - a.score);
-            document.getElementById('leaderboard-list').innerHTML = sorted.map((p, i) => `
-                <div style="font-size:30px; margin-bottom:15px; font-weight:bold;">${i+1}. ${p.name}: ${p.score} Pts</div>
-            `).join('');
+            document.getElementById('leaderboard-list').innerHTML = sorted.map((p, i) => `<div style="font-size:30px; margin-bottom:15px; font-weight:bold;">${i+1}. ${p.name}: ${p.score} Pts</div>`).join('');
         }
 
         function updateScoreboard() {
             const container = document.getElementById('scoreboard');
             const activeList = players.filter(p => p.active);
-            container.innerHTML = activeList.map((p, i) => `
-                <div class="player-card" style="border-color:${i===currentPlayerIdx?'var(--blue)':'#333'}">
-                    <b>${p.name}</b>: ${p.score}
-                </div>
-            `).join('');
+            container.innerHTML = activeList.map((p, i) => `<div class="player-card" style="border-color:${i===currentPlayerIdx?'var(--blue)':'#333'}"><b>${p.name}</b>: ${p.score}</div>`).join('');
         }
 
         function showPage(id) {

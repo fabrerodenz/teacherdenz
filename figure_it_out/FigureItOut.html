@@ -45,61 +45,63 @@
         .btn {
             padding: 22px 45px; font-size: 2.2rem; font-weight: 600;
             color: white; border: none; cursor: pointer; margin: 15px;
-            border-radius: 40px;
+            border-radius: 40px; /* 30-50px radius */
             position: relative; overflow: hidden;
             background: var(--primary);
-            box-shadow: inset 4px 4px 10px rgba(255,255,255,0.4), inset -4px -4px 10px rgba(0,0,0,0.2);
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            /* Inset shadows create 3D depth without external shadow */
+            box-shadow: inset 6px 6px 12px rgba(255,255,255,0.4), 
+                        inset -6px -6px 12px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bounce release */
         }
 
+        /* Glossy Highlight Overlay */
         .btn::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
         }
 
-        .btn:active { transform: scale(0.88); filter: brightness(0.9); }
+        .btn:active {
+            transform: scale(0.88); /* Squishy effect */
+            filter: brightness(0.9);
+        }
+
         .btn-green { background-color: var(--secondary); }
         .btn-blue { background-color: var(--accent); }
 
-        /* CONTAINERS */
+        /* INSTRUCTION BOX - CENTERED & LARGE */
         .instruction-box {
-            background: rgba(255, 255, 255, 0.9); padding: 45px; border-radius: 40px;
-            text-align: center; font-size: 2.2rem; line-height: 2; max-width: 80%;
-            box-shadow: inset 5px 5px 15px rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.9); padding: 50px 70px; border-radius: 40px;
+            text-align: center; font-size: 2.5rem; line-height: 2.2; max-width: 85%;
+            box-shadow: inset 4px 4px 10px rgba(0,0,0,0.05);
         }
 
+        /* SCOREBOARD */
         .scoreboard-container {
-            position: absolute; top: 12%;
+            position: absolute; top: 10%;
             display: flex; gap: 50px; background: #f0f3f7;
             padding: 25px 50px; border-radius: 50px;
-            box-shadow: inset 6px 6px 12px rgba(0,0,0,0.1), inset -6px -6px 12px rgba(255,255,255,0.8);
+            box-shadow: inset 8px 8px 16px rgba(0,0,0,0.1), inset -8px -8px 16px rgba(255,255,255,0.8);
         }
 
-        .score-box { text-align: center; min-width: 160px; }
+        .score-box { text-align: center; min-width: 170px; }
         .score-num { font-size: 5rem; font-weight: bold; color: var(--primary); }
 
-        .number-container { display: flex; gap: 30px; margin-top: 100px; }
+        /* NUMBER ICONS */
+        .number-container { display: flex; gap: 30px; margin-top: 80px; }
         .num-box {
-            width: 165px; height: 165px; border-radius: 40px;
+            width: 160px; height: 160px; border-radius: 40px;
             font-size: 5rem; font-weight: bold; color: white;
             display: flex; align-items: center; justify-content: center;
             background: var(--accent); position: relative; overflow: hidden;
-            box-shadow: inset 5px 5px 10px rgba(255,255,255,0.4), inset -5px -5px 10px rgba(0,0,0,0.2);
+            box-shadow: inset 6px 6px 12px rgba(255,255,255,0.4), inset -6px -6px 12px rgba(0,0,0,0.2);
             cursor: pointer; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
         .num-box:active { transform: scale(0.85); }
-        .num-box.used { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
+        .num-box.used { opacity: 0.2; pointer-events: none; filter: grayscale(1); }
 
+        /* LOWERED NAVIGATION */
         .game-nav { position: absolute; bottom: 15px; display: flex; gap: 30px; } 
-
-        /* IMAGES & TEXT */
-        .display-img { max-height: 45vh; border: 12px solid white; border-radius: 30px; }
-        .answer-text { 
-            font-size: 3.5rem; background: white; padding: 20px 40px; 
-            border-radius: 30px; margin-top: 45px; margin-bottom: 25px; 
-        }
-
-        .edit-input { width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 20px; font-family: 'Fredoka'; font-size: 1.2rem; background: #f9f9f9; }
 
         #music-btn {
             position: fixed; top: 20px; right: 20px; background: white;
@@ -107,15 +109,21 @@
             cursor: pointer; z-index: 1000; border: none;
             box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
         }
+
+        .display-img { max-height: 42vh; border: 12px solid white; border-radius: 30px; }
+        .answer-text { font-size: 3.5rem; background: white; padding: 25px 45px; border-radius: 30px; margin-top: 40px; }
     </style>
 </head>
-<body onclick="autoStartAudio()">
+<body onclick="initAudio()">
 
-    <audio id="bgMusic" loop preload="auto"><source src="game_bg.mp3" type="audio/mpeg"></audio>
+    <audio id="bgMusic" loop preload="auto">
+        <source src="game_bg.mp3" type="audio/mpeg">
+    </audio>
+
     <button id="music-btn" onclick="toggleMusic(event)">🎵</button>
 
     <div id="home-page" class="page active">
-        <div class="game-nav" style="bottom: 35px;">
+        <div class="game-nav" style="bottom: 40px;">
             <button class="btn btn-blue" onclick="showPage('how-to-page')">How to Play</button>
             <button class="btn btn-green" onclick="showPage('game-page')">Start Game</button>
             <button class="btn btn-blue" onclick="showPage('groups-page')">Groups</button>
@@ -124,58 +132,28 @@
 
     <div id="how-to-page" class="page">
         <div class="instruction-box">
-            <b>Go to the front</b><br>
-            <b>Look at the picture</b><br>
-            <b>Write your answer on your whiteboard</b><br>
-            <b>Press the buzzer when you finish</b><br>
-            <b>Read the sentence with your group</b>
+            <b>Go to the front.</b><br>
+            <b>Look at the picture.</b><br>
+            <b>Write the correct sentence on your whiteboard.</b><br>
+            <b>Press the buzzer when you finish.</b><br>
+            <b>Read the sentence with your group.</b>
         </div>
         <button class="btn btn-blue" style="margin-top: 40px;" onclick="showPage('home-page')">Back</button>
-    </div>
-
-    <div id="groups-page" class="page">
-        <div style="display: flex; gap: 40px;">
-            <div class="instruction-box" style="min-width: 400px;">
-                <h2 id="disp-nameA" style="color:var(--accent); margin:0">GROUP A</h2>
-                <hr style="border: 2px solid var(--bg); margin: 15px 0;">
-                <div id="disp-membersA" style="font-size: 1.8rem;">Charlie, Randy, Jadon, Irene, Jason</div>
-            </div>
-            <div class="instruction-box" style="min-width: 400px;">
-                <h2 id="disp-nameB" style="color:var(--primary); margin:0">GROUP B</h2>
-                <hr style="border: 2px solid var(--bg); margin: 15px 0;">
-                <div id="disp-membersB" style="font-size: 1.8rem;">Sophia, Henry, Athena, James, Linda</div>
-            </div>
-        </div>
-        <div class="game-nav" style="bottom: 35px;">
-            <button class="btn btn-blue" onclick="showPage('home-page')">Back</button>
-            <button class="btn btn-green" onclick="showPage('edit-groups-page')">Edit Groups</button>
-        </div>
-    </div>
-
-    <div id="edit-groups-page" class="page">
-        <div class="instruction-box" style="width: 550px;">
-            <h2 style="margin:0">Edit Group Details</h2>
-            <input id="edit-nameA" class="edit-input" placeholder="Group A Name">
-            <textarea id="edit-membersA" class="edit-input" rows="2" placeholder="Members (comma separated)"></textarea>
-            <input id="edit-nameB" class="edit-input" placeholder="Group B Name">
-            <textarea id="edit-membersB" class="edit-input" rows="2" placeholder="Members (comma separated)"></textarea>
-            <button class="btn btn-green" onclick="saveGroups()">SAVE CHANGES</button>
-        </div>
     </div>
 
     <div id="game-page" class="page">
         <div class="scoreboard-container">
             <div class="score-box">
-                <div class="gn-A" style="font-size: 1.5rem; font-weight: 600;">Group A</div>
+                <div style="font-size: 1.5rem; font-weight: 600;">Group A</div>
                 <div id="scoreA" class="score-num">0</div>
-                <button class="btn btn-green" style="padding: 5px 20px; font-size: 1.2rem;" onclick="changeScore('A', 1)">➕</button>
-                <button class="btn" style="padding: 5px 20px; font-size: 1.2rem;" onclick="changeScore('A', -1)">➖</button>
+                <button class="btn btn-green" style="padding: 8px 20px; font-size: 1.2rem;" onclick="changeScore('A', 1)">➕</button>
+                <button class="btn" style="padding: 8px 20px; font-size: 1.2rem;" onclick="changeScore('A', -1)">➖</button>
             </div>
             <div class="score-box">
-                <div class="gn-B" style="font-size: 1.5rem; font-weight: 600;">Group B</div>
+                <div style="font-size: 1.5rem; font-weight: 600;">Group B</div>
                 <div id="scoreB" class="score-num">0</div>
-                <button class="btn btn-green" style="padding: 5px 20px; font-size: 1.2rem;" onclick="changeScore('B', 1)">➕</button>
-                <button class="btn" style="padding: 5px 20px; font-size: 1.2rem;" onclick="changeScore('B', -1)">➖</button>
+                <button class="btn btn-green" style="padding: 8px 20px; font-size: 1.2rem;" onclick="changeScore('B', 1)">➕</button>
+                <button class="btn" style="padding: 8px 20px; font-size: 1.2rem;" onclick="changeScore('B', -1)">➖</button>
             </div>
         </div>
 
@@ -194,7 +172,7 @@
     </div>
 
     <div id="question-page" class="page">
-        <div id="q-prompt" style="font-size: 3rem; background: white; padding: 15px 35px; border-radius: 25px; margin-bottom: 25px;"></div>
+        <div id="q-prompt" style="font-size: 3rem; background: white; padding: 20px 40px; border-radius: 30px; margin-bottom: 25px;"></div>
         <img id="q-img" src="" class="display-img">
         <button class="btn btn-green" style="margin-top: 30px;" onclick="showAns()">SHOW THE ANSWER</button>
     </div>
@@ -202,21 +180,10 @@
     <div id="answer-page" class="page">
         <img id="a-img" src="" class="display-img">
         <div id="a-text" class="answer-text" style="color:var(--secondary); font-weight:bold;"></div>
-        <div style="display:flex; gap:30px;">
-            <button class="btn btn-blue awardA" onclick="award('A')">Group A</button>
-            <button class="btn btn-blue awardB" onclick="award('B')">Group B</button>
+        <div style="display:flex; gap:30px; margin-top: 20px;">
+            <button class="btn btn-blue" onclick="award('A')">Group A</button>
+            <button class="btn btn-blue" onclick="award('B')">Group B</button>
         </div>
-    </div>
-
-    <div id="result-page" class="page">
-        <div class="instruction-box">
-            <h1 style="font-size:4rem; margin:0">FINAL SCORE</h1>
-            <div style="display:flex; gap:80px; margin-top:30px;">
-                <div><h2 class="gn-A">Group A</h2><div id="finA" style="font-size:6rem; color:var(--accent)">0</div></div>
-                <div><h2 class="gn-B">Group B</h2><div id="finB" style="font-size:6rem; color:var(--primary)">0</div></div>
-            </div>
-        </div>
-        <button class="btn btn-green" style="margin-top: 40px;" onclick="location.reload()">PLAY AGAIN</button>
     </div>
 
     <script>
@@ -229,44 +196,31 @@
         ];
 
         let scores = { A: 0, B: 0 };
-        let groups = { nameA: "GROUP A", membersA: "Charlie, Randy, Jadon, Irene, Jason", nameB: "GROUP B", membersB: "Sophia, Henry, Athena, James, Linda" };
         let currentIdx = 0;
         let music = document.getElementById('bgMusic');
-        let audioStarted = false;
+        let audioInitialized = false;
 
-        function autoStartAudio() {
-            if (!audioStarted) {
-                music.play().then(() => { audioStarted = true; }).catch(e => console.log("Audio ready"));
+        function initAudio() {
+            if (!audioInitialized) {
+                music.play().catch(e => console.log("Audio waiting for interaction"));
+                audioInitialized = true;
             }
         }
 
         function toggleMusic(e) {
             e.stopPropagation();
-            if (music.paused) { music.play(); document.getElementById('music-btn').innerText = '🎵'; }
-            else { music.pause(); document.getElementById('music-btn').innerText = '🔇'; }
+            if (music.paused) {
+                music.play();
+                document.getElementById('music-btn').innerText = '🎵';
+            } else {
+                music.pause();
+                document.getElementById('music-btn').innerText = '🔇';
+            }
         }
 
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-        }
-
-        function saveGroups() {
-            groups.nameA = document.getElementById('edit-nameA').value || "GROUP A";
-            groups.membersA = document.getElementById('edit-membersA').value;
-            groups.nameB = document.getElementById('edit-nameB').value || "GROUP B";
-            groups.membersB = document.getElementById('edit-membersB').value;
-            
-            document.getElementById('disp-nameA').innerText = groups.nameA;
-            document.getElementById('disp-membersA').innerText = groups.membersA;
-            document.getElementById('disp-nameB').innerText = groups.nameB;
-            document.getElementById('disp-membersB').innerText = groups.membersB;
-            
-            document.querySelectorAll('.gn-A').forEach(el => el.innerText = groups.nameA);
-            document.querySelectorAll('.gn-B').forEach(el => el.innerText = groups.nameB);
-            document.querySelector('.awardA').innerText = groups.nameA;
-            document.querySelector('.awardB').innerText = groups.nameB;
-            showPage('groups-page');
         }
 
         function startQ(i) {
@@ -286,31 +240,21 @@
         function award(winner) {
             if(winner === 'A') { scores.A += 2; scores.B += 1; }
             else { scores.B += 2; scores.A += 1; }
-            updateScores();
+            document.getElementById('scoreA').innerText = scores.A;
+            document.getElementById('scoreB').innerText = scores.B;
             showPage('game-page');
         }
 
         function changeScore(g, v) {
             scores[g] = Math.max(0, scores[g] + v);
-            updateScores();
-        }
-
-        function updateScores() {
             document.getElementById('scoreA').innerText = scores.A;
             document.getElementById('scoreB').innerText = scores.B;
         }
 
         function showResults() {
-            document.getElementById('finA').innerText = scores.A;
-            document.getElementById('finB').innerText = scores.B;
-            showPage('result-page');
+            // Logic to show results page
+            alert(`Final Scores\nGroup A: ${scores.A}\nGroup B: ${scores.B}`);
         }
-
-        // Initialize edit inputs
-        document.getElementById('edit-nameA').value = groups.nameA;
-        document.getElementById('edit-membersA').value = groups.membersA;
-        document.getElementById('edit-nameB').value = groups.nameB;
-        document.getElementById('edit-membersB').value = groups.membersB;
     </script>
 </body>
 </html>
