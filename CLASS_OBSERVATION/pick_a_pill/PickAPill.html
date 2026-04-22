@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PICK A PILL!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4CAF50; --primary-dark: #388E3C;
+            --danger: #f44336; --danger-dark: #d32f2f;
+            --warning: #ff9800; --warning-dark: #f57c00;
+            --blue: #2196F3; --blue-dark: #1976D2;
+            --gold: #FFD700;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Fredoka', sans-serif; overflow: hidden; }
+
+        .page { display: none; width: 100vw; height: 100vh; background-size: cover; background-position: center; position: relative; flex-direction: column; align-items: center; justify-content: center; }
+        .active { display: flex; }
+
+        #home-page { background-image: url('home_page.png'); }
+        #game-page { background-image: url('game_page.png'); }
+        #question-page { background-image: url('question_page.png'); }
+        #result-yes { background-image: url('result_page_yes.png'); }
+        #result-no { background-image: url('result_page_no.png'); }
+        #final-result-page { background-image: url('final_result.png'); }
+
+        .top-controls {
+            position: absolute; top: 20px; right: 20px; z-index: 100;
+            display: flex; gap: 15px;
+        }
+
+        .icon-btn {
+            background: white; border-radius: 50%; width: 65px; height: 65px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border: 4px solid var(--blue); font-size: 26px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.1s;
+        }
+
+        .btn-3d { 
+            position: relative;
+            padding: 20px 45px;
+            font-size: 26px; 
+            font-weight: bold; 
+            color: white; 
+            border: none; 
+            border-radius: 50px;
+            cursor: pointer; 
+            text-transform: uppercase;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 0 rgba(0,0,0,0.2), inset 0 -8px 8px rgba(0,0,0,0.3), inset 0 8px 8px rgba(255,255,255,0.4);
+        }
+
+        .btn-3d::after {
+            content: '';
+            position: absolute;
+            top: 10%; left: 10%; width: 80%; height: 20%;
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        .btn-3d:active {
+            transform: translateY(8px) scale(0.95);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2), inset 0 -4px 4px rgba(0,0,0,0.3), inset 0 4px 4px rgba(255,255,255,0.4);
+        }
+
+        .btn-green { background: var(--primary); }
+        .btn-orange { background: var(--warning); }
+        .btn-blue { background: var(--blue); }
+        .btn-red { background: var(--danger); }
+
+        .home-controls { 
+            position: absolute; bottom: 80px; left: -30px; width: 100%; display: flex; justify-content: center; gap: 35px; 
+        }
+
+        #scoreboard-container {
+            position: absolute; left: 80px; top: 45%; transform: translateY(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 10;
+        }
+        #scoreboard { display: flex; flex-direction: column; gap: 8px; width: 190px; }
+        .player-card { 
+            background: rgba(255,255,255,0.95); padding: 8px 14px; border-radius: 12px; border: 3px solid #333; 
+            font-size: 17px; box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+        }
+
+        .pill-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 40px; margin-left: 220px; }
+        .pill-item { width: 130px; height: 120px; cursor: pointer; transition: transform 0.2s; }
+        .pill-item img { width: 100%; height: 100%; object-fit: fill; }
+        
+        .how-list { 
+            list-style: none; 
+            padding: 0; 
+            margin: 40px 0; 
+            font-size: 38px; 
+            line-height: 2.2; 
+            text-align: center; 
+            font-weight: bold; 
+        }
+        .how-list li {
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        #player-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-height: 85%; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 0 50px rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto; }
+        .player-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 2px solid #eee; margin-bottom: 5px; border-radius: 10px; background: #fff; cursor: grab; font-size: 24px; }
+        .player-row.dragging { opacity: 0.5; background: #f0f0f0; }
+        .modal-footer { display: flex; gap: 15px; margin-top: 20px; justify-content: center; position: sticky; bottom: 0; background: white; padding-top: 10px; }
+    </style>
+</head>
+<body onload="initMusic()">
+
+    <audio id="game-bg-music" loop src="game_bg.mp3"></audio>
+
+    <div class="top-controls">
+        <div class="icon-btn" onclick="location.reload()">🏠</div>
+        <div id="music-control" class="icon-btn" onclick="toggleMusic()">🔊</div>
+    </div>
+
+    <section id="home-page" class="page active">
+        <div class="home-controls">
+            <button class="btn-3d btn-blue" onclick="toggleModal('how-to-modal', true)">How to Play</button>
+            <button class="btn-3d btn-orange" onclick="toggleModal('player-modal', true)">Players</button>
+            <button class="btn-3d btn-green" onclick="startGame()">Start Game</button>
+        </div>
+    </section>
+
+    <section id="game-page" class="page">
+        <div class="game-container">
+            <div id="scoreboard-container">
+                <div id="scoreboard"></div>
+                <button class="btn-3d btn-red" style="padding: 10px 30px; font-size: 18px;" onclick="skipTurn()">SKIP ⏭️</button>
+            </div>
+            <div class="pill-grid" id="pill-grid"></div>
+        </div>
+    </section>
+
+    <section id="question-page" class="page">
+        <img id="guess-image" style="max-height: 400px; width: auto; margin-bottom: 30px; border: 10px solid white; border-radius: 30px;" src="">
+        <div style="display:flex; gap:35px">
+            <button class="btn-3d btn-green" onclick="submitAnswer(true)">CORRECT</button>
+            <button class="btn-3d btn-orange" onclick="submitAnswer(false)">TRY AGAIN</button>
+        </div>
+    </section>
+
+    <section id="result-yes" class="page">
+        <div style="transform: translate(120px, 100px); text-align: center;">
+            <p id="points-display" style="font-size: 130px; color: #2E7D32; margin: 0;">+1</p>
+            <div id="ans-yes" style="font-size: 45px; text-transform: uppercase; color: #333; font-weight: 800; margin: 15px 0;"></div>
+            <button class="btn-3d btn-green" onclick="nextTurn()">Back to Game</button>
+        </div>
+    </section>
+
+    <section id="result-no" class="page">
+        <div style="transform: translate(-120px, 100px); text-align: center;">
+            <div id="ans-no" style="font-size: 45px; text-transform: uppercase; color: #333; font-weight: 800; margin: 15px 0;"></div>
+            <button class="btn-3d btn-orange" onclick="nextTurn()">Back to Game</button>
+        </div>
+    </section>
+
+    <section id="final-result-page" class="page">
+        <div style="background: rgba(255,255,255,0.85); padding: 30px; border-radius: 30px; border: 8px solid var(--blue); width: 80%; text-align: center;">
+            <h1 style="font-size: 60px; color: var(--blue);">🏆 WINNERS 🏆</h1>
+            <div id="leaderboard-list"></div>
+        </div>
+        <button class="btn-3d btn-blue" style="margin-top: 30px;" onclick="location.reload()">Back to Home</button>
+    </section>
+
+    <div id="player-modal">
+        <h2 style="text-align:center">Student Roster</h2>
+        <div id="player-list-container"></div>
+        <div class="modal-footer">
+            <button class="btn-3d btn-blue" style="font-size: 18px; padding: 12px 25px;" onclick="addNewPlayer()">+ Add Player</button>
+            <button class="btn-3d btn-green" style="font-size: 18px; padding: 12px 25px;" onclick="toggleModal('player-modal', false)">Save</button>
+        </div>
+    </div>
+
+    <div id="how-to-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); color:white; z-index:1001; justify-content:center; align-items:center; flex-direction:column; padding:40px;" onclick="toggleModal('how-to-modal', false)">
+        <h1 style="font-size: 55px; color: var(--blue); margin-bottom: 20px;">HOW TO PLAY</h1>
+        <ul class="how-list">
+            <li>Choose a pill.</li>
+            <li>Look at the picture.</li>
+            <li>Say the word (body part or illness).</li>
+            <li>If correct, you get the points.</li>
+            <li>If incorrect, you get no points.</li>
+        </ul>
+        <p style="color:var(--blue); cursor:pointer; font-size: 26px; margin-top: 30px;">(Tap anywhere to close)</p>
+    </div>
+
+    <script>
+        const baseVocab = [
+            {w:'headache', i:'headache.png'}, {w:'runny nose', i:'runny_nose.png'},
+            {w:'toothache', i:'toothache.png'}, {w:'stomachache', i:'stomachache.png'},
+            {w:'sore throat', i:'sore_throat.png'}, {w:'cold', i:'cold.png'},
+            {w:'fever', i:'fever.png'}, {w:'head', i:'head.png'},
+            {w:'ears', i:'ears.png'}, {w:'eyes', i:'eyes.png'},
+            {w:'mouth', i:'mouth.png'}, {w:'nose', i:'nose.png'},
+            {w:'hands', i:'hands.png'}, {w:'arms', i:'arms.png'},
+            {w:'legs', i:'legs.png'}, {w:'foot', i:'foot.png'},
+            {w:'feet', i:'feet.png'}, {w:'knees', i:'knees.png'}
+        ];
+
+        let players = [
+            {name: "Randy", score: 0, active: true}, {name: "Jadon", score: 0, active: true},
+            {name: "Charlie", score: 0, active: true}, {name: "Irene", score: 0, active: true},
+            {name: "Jason", score: 0, active: true}, {name: "Sophia", score: 0, active: true},
+            {name: "James", score: 0, active: true}, {name: "Athena", score: 0, active: true},
+            {name: "Henry", score: 0, active: true}, {name: "Linda", score: 0, active: true}
+        ];
+
+        let vocabulary = [];
+        let pillsLeft = 20;
+        let isMusicOn = false;
+        let currentPlayerIdx = 0;
+        let activeItem = null;
+        let activeDiv = null;
+
+        const bgMusic = document.getElementById('game-bg-music');
+
+        function initMusic() {
+            bgMusic.play().then(() => { isMusicOn = true; document.getElementById('music-control').innerText = "🔊"; })
+            .catch(() => { isMusicOn = false; document.getElementById('music-control').innerText = "🔇"; });
+        }
+
+        function toggleMusic() {
+            isMusicOn = !isMusicOn;
+            if(isMusicOn) { bgMusic.play(); document.getElementById('music-control').innerText = "🔊"; }
+            else { bgMusic.pause(); document.getElementById('music-control').innerText = "🔇"; }
+        }
+
+        function toggleModal(id, show) { document.getElementById(id).style.display = show ? (id==='how-to-modal'?'flex':'block') : 'none'; }
+
+        function renderPlayerList() {
+            const container = document.getElementById('player-list-container');
+            container.innerHTML = '';
+            players.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = `player-row ${p.active ? '' : 'inactive-player'}`;
+                div.draggable = true;
+                div.dataset.index = i;
+                div.innerHTML = `<span>☰ ${p.name}</span>
+                    <div><button class="btn-3d btn-green" style="padding:5px 15px; font-size:14px; border-radius:10px;" onclick="event.stopPropagation(); setPlayerStatus(${i}, true)">✔</button>
+                    <button class="btn-3d btn-red" style="padding:5px 15px; font-size:14px; border-radius:10px;" onclick="event.stopPropagation(); setPlayerStatus(${i}, false)">✖</button></div>`;
+                div.addEventListener('dragstart', () => div.classList.add('dragging'));
+                div.addEventListener('dragend', () => { div.classList.remove('dragging'); reorderPlayers(); });
+                container.appendChild(div);
+            });
+            container.addEventListener('dragover', e => {
+                e.preventDefault();
+                const dragging = document.querySelector('.dragging');
+                const afterElement = [...container.querySelectorAll('.player-row:not(.dragging)')].reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = e.clientY - box.top - box.height / 2;
+                    return offset < 0 && offset > closest.offset ? { offset, element: child } : closest;
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+                afterElement == null ? container.appendChild(dragging) : container.insertBefore(dragging, afterElement);
+            });
+        }
+
+        function reorderPlayers() {
+            const newOrder = [];
+            document.querySelectorAll('.player-row').forEach(row => newOrder.push(players[row.dataset.index]));
+            players = newOrder;
+            renderPlayerList();
+        }
+
+        function setPlayerStatus(i, status) { players[i].active = status; renderPlayerList(); }
+        function addNewPlayer() {
+            const n = prompt("Enter student name:");
+            if (n) { players.push({name: n.trim(), score: 0, active: true}); renderPlayerList(); }
+        }
+
+        function startGame() {
+            vocabulary = [...baseVocab, baseVocab[0], baseVocab[1]].sort(() => 0.5 - Math.random());
+            pillsLeft = 20; currentPlayerIdx = 0;
+            showPage('game-page'); updateScoreboard(); renderGrid();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('pill-grid'); grid.innerHTML = '';
+            vocabulary.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'pill-item'; div.innerHTML = `<img src="pill.png" alt="pill">`;
+                div.onclick = () => {
+                    activeItem = item; activeDiv = div;
+                    document.getElementById('guess-image').src = item.i;
+                    showPage('question-page');
+                };
+                grid.appendChild(div);
+            });
+        }
+
+        function skipTurn() {
+            const activeList = players.filter(p => p.active);
+            if(activeList.length === 0) return;
+            currentPlayerIdx = (currentPlayerIdx + 1) % activeList.length;
+            updateScoreboard();
+        }
+
+        function submitAnswer(isCorrect) {
+            const activeList = players.filter(p => p.active);
+            if(activeList.length === 0) return;
+            const curP = activeList[currentPlayerIdx];
+            if(isCorrect) {
+                const r = Math.random() * 100;
+                let pts = r < 40 ? 1 : r < 70 ? 3 : 5;
+                players.find(p => p.name === curP.name).score += pts;
+                document.getElementById('points-display').innerText = "+" + pts;
+                document.getElementById('ans-yes').innerText = activeItem.w;
+                showPage('result-yes');
+            } else {
+                document.getElementById('ans-no').innerText = activeItem.w;
+                showPage('result-no');
+            }
+        }
+
+        function nextTurn() {
+            if(activeDiv) activeDiv.style.visibility = 'hidden';
+            pillsLeft--;
+            if(pillsLeft <= 0) { showFinalResult(); } 
+            else {
+                const count = players.filter(p => p.active).length;
+                currentPlayerIdx = (currentPlayerIdx + 1) % count;
+                updateScoreboard(); showPage('game-page');
+            }
+        }
+
+        function showFinalResult() {
+            showPage('final-result-page');
+            const sorted = [...players.filter(p => p.active)].sort((a,b) => b.score - a.score);
+            document.getElementById('leaderboard-list').innerHTML = sorted.map((p, i) => `<div style="font-size:30px; margin-bottom:15px; font-weight:bold;">${i+1}. ${p.name}: ${p.score} Pts</div>`).join('');
+        }
+
+        function updateScoreboard() {
+            const container = document.getElementById('scoreboard');
+            const activeList = players.filter(p => p.active);
+            container.innerHTML = activeList.map((p, i) => `<div class="player-card" style="border-color:${i===currentPlayerIdx?'var(--blue)':'#333'}"><b>${p.name}</b>: ${p.score}</div>`).join('');
+        }
+
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        renderPlayerList();
+    </script>
+</body>
+</html>
